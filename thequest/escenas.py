@@ -17,6 +17,8 @@ class Escena:
 class Portada(Escena):
     def __init__(self, pantalla: pg.Surface):
         super().__init__(pantalla)
+        self.fondo_portada = pg.image.load(os.path.join("resources", "images", "fondo.png"))
+
 
     def bucle_principal(self):
         '''Este es el bucle principal'''
@@ -30,6 +32,7 @@ class Portada(Escena):
                 if event.type == pg.QUIT:
                     sys.exit()
 
-
-            self.pantalla.fill((COLOR_FONDO))            
+            self.pantalla.blit(self.fondo_portada, (0,0))        
             pg.display.flip()
+
+    

@@ -1,6 +1,6 @@
 # Dimensiones de la ventana de juego
 
-ANCHO = 800
+ANCHO = 1000
 ALTO = 700
 
 # Color de fondo de la portada temporal

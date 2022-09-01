@@ -7,7 +7,7 @@ from thequest import ALTO, ANCHO
 class Thequest:
     def __init__(self):
         pg.init()
-        self.display = pg.display.set_mode((ALTO, ANCHO))
+        self.display = pg.display.set_mode((ANCHO, ALTO))
         pg.display.set_caption("The Quest")
 
         icon = pg.image.load(os.path.join("resources", "images", "game-icon.png"))
@@ -20,5 +20,4 @@ class Thequest:
     def jugar(self):
         for escena in self.escenas:
             escena.bucle_principal()
-
         
