@@ -3,6 +3,6 @@
 ANCHO = 1000
 ALTO = 700
 
-# Color de fondo de la portada temporal
-
+# Colores para usar 
+COLOR_TEXTO = (255,255,255)
 COLOR_FONDO = (0,0,255)
