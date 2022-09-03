@@ -32,7 +32,7 @@ class Portada(Escena):
                 if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
                     salir = True
                 
-                if event.type == pg.QUIT:
+                if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
                     sys.exit()
 
             self.pantalla.blit(self.fondo_portada, (0,0))
@@ -49,22 +49,23 @@ class Portada(Escena):
         self.pantalla.blit(texto, (pos_x, pos_y))
 
     def pintar_opciones(self):
-        opciones = ["COMENZAR - (SPACE)",
-                    "HISTORIA - (H)",
-                    "INSTRUCCIONES - (I)",
-                    "SALIR - (ESC)"
-                    ]
+        opcion_comenzar = "COMENZAR PARTIDA - (SPACE)"
+        opcion_historia = "HISTORIA - (H)"
+        opcion_instrucciones = "INSTRUCCIONES - (I)"
+        opcion_salir = "SALIR - (ESC)"
 
-        texto_renderizado = []
-
-        for opcion in opciones:
-            texto_render = pg.font.Font.render(self.texto, opcion, True, COLOR_TEXTO)
-            texto_renderizado.append(texto_render)
-
-        list_pos_x = []
-        for i in texto_renderizado:
-            pos_x = (ANCHO - i.get_width()/2)
-            list_pos_x.append(pos_x)
+        render_comenzar = pg.font.Font.render(self.texto, opcion_comenzar, True, COLOR_TEXTO)
+        render_historia = pg.font.Font.render(self.texto, opcion_historia, True, COLOR_TEXTO)
+        render_instrucciones = pg.font.Font.render(self.texto, opcion_instrucciones, True, COLOR_TEXTO)
+        render_salir = pg.font.Font.render(self.texto, opcion_salir, True, COLOR_TEXTO)
         
-        pos_y = ALTO - 300
-        self.pantalla.blits([(texto_renderizado[0], (list_pos_x[0],pos_y))])
+        posx_comenzar = (ANCHO - render_comenzar.get_width()) / 2
+        posx_historia = (ANCHO - render_historia.get_width()) / 2
+        posx_instrucciones = (ANCHO - render_instrucciones.get_width()) / 2
+        posx_salir = (ANCHO - render_salir.get_width()) / 2
+
+        self.pantalla.blits(
+            [(render_comenzar, (posx_comenzar, ALTO - 300)),
+             (render_historia, (posx_historia, ALTO - 250)),
+              (render_instrucciones, (posx_instrucciones, ALTO - 200)),
+               (render_salir, (posx_salir, ALTO - 150))])
