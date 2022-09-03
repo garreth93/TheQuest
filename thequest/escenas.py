@@ -35,6 +35,9 @@ class Portada(Escena):
                 if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
                     salir = True
                 
+                if event.type == pg.KEYDOWN and event.key == pg.K_h:
+                    salir = True
+
                 if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
                     sys.exit()
 
@@ -73,3 +76,28 @@ class Portada(Escena):
               (render_instrucciones, (posx_instrucciones, ALTO - 200)),
                (render_salir, (posx_salir, ALTO - 150))])
     
+class Historia(Escena):
+    def __init__(self, pantalla: pg.Surface):
+        super().__init__(pantalla)
+
+
+    def bucle_principal(self):
+        '''Este es el bucle principal'''
+
+        salir = False
+        while not salir:
+            for event in pg.event.get():
+                if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
+                    salir = True
+                
+                if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
+                    sys.exit()
+
+            self.pantalla.fill(COLOR_FONDO)     
+                            
+            pg.display.flip()
+
+    def textoHistoria(self):
+        fuente_historia = os.path.join("resources", "fonts", "gomarice_no_continue.ttf")
+        self.historia = pg.font.Font(fuente_historia, 20)
+        

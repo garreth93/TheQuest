@@ -1,7 +1,7 @@
 import os
 import pygame as pg
 
-from thequest.escenas import Portada
+from thequest.escenas import Historia, Portada
 from thequest import ALTO, ANCHO
 
 class Thequest:
@@ -14,7 +14,8 @@ class Thequest:
         pg.display.set_icon(icon)
 
         self.escenas = [
-            Portada(self.display)
+            Portada(self.display),
+            Historia(self.display)
         ]
 
     def jugar(self):

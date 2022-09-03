@@ -5,4 +5,4 @@ ALTO = 700
 
 # Colores para usar 
 COLOR_TEXTO = (255,255,255)
-COLOR_FONDO = (0,0,255)
+COLOR_FONDO = (0,0,0)
