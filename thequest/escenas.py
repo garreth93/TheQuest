@@ -23,6 +23,9 @@ class Portada(Escena):
         fuente_texto = os.path.join("resources", "fonts", "Plaguard-ZVnjx.otf")
         self.texto = pg.font.Font(fuente_texto, 40)
 
+        pg.mixer.music.load(os.path.join("resources", "sounds", "mainmenu.ogg"))
+        pg.mixer.music.play(-1)
+
     def bucle_principal(self):
         '''Este es el bucle principal'''
 
@@ -37,7 +40,7 @@ class Portada(Escena):
 
             self.pantalla.blit(self.fondo_portada, (0,0))
             self.pintar_titulo()
-            self.pintar_opciones()        
+            self.pintar_opciones()                   
             pg.display.flip()
 
     def pintar_titulo(self):
@@ -69,3 +72,4 @@ class Portada(Escena):
              (render_historia, (posx_historia, ALTO - 250)),
               (render_instrucciones, (posx_instrucciones, ALTO - 200)),
                (render_salir, (posx_salir, ALTO - 150))])
+    
