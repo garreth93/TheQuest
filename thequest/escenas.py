@@ -49,9 +49,22 @@ class Portada(Escena):
         self.pantalla.blit(texto, (pos_x, pos_y))
 
     def pintar_opciones(self):
-        opcion_comenzar = "COMENZAR - (ENTER)"
-        texto = pg.font.Font.render(self.texto, opcion_comenzar, True, COLOR_TEXTO)
-        ancho_opcion_comenzar = texto.get_width()
-        pos_x = (ANCHO - ancho_opcion_comenzar)/2
+        opciones = ["COMENZAR - (SPACE)",
+                    "HISTORIA - (H)",
+                    "INSTRUCCIONES - (I)",
+                    "SALIR - (ESC)"
+                    ]
+
+        texto_renderizado = []
+
+        for opcion in opciones:
+            texto_render = pg.font.Font.render(self.texto, opcion, True, COLOR_TEXTO)
+            texto_renderizado.append(texto_render)
+
+        list_pos_x = []
+        for i in texto_renderizado:
+            pos_x = (ANCHO - i.get_width()/2)
+            list_pos_x.append(pos_x)
+        
         pos_y = ALTO - 300
-        self.pantalla.blit(texto, (pos_x,pos_y))
+        self.pantalla.blits([(texto_renderizado[0], (list_pos_x[0],pos_y))])
