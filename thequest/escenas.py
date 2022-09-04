@@ -79,6 +79,8 @@ class Portada(Escena):
 class Historia(Escena):
     def __init__(self, pantalla: pg.Surface):
         super().__init__(pantalla)
+        fuente_historia = os.path.join("resources", "fonts", "gomarice_no_continue.ttf")
+        self.historia = pg.font.Font(fuente_historia, 30)
 
 
     def bucle_principal(self):
@@ -94,10 +96,21 @@ class Historia(Escena):
                     sys.exit()
 
             self.pantalla.fill(COLOR_FONDO)     
-                            
+            self.textoHistoria()       
             pg.display.flip()
 
-    def textoHistoria(self):
-        fuente_historia = os.path.join("resources", "fonts", "gomarice_no_continue.ttf")
-        self.historia = pg.font.Font(fuente_historia, 20)
+    def textoHistoria(self):        
+        texto_historia = '''            
+            Todo empezo en el momento que fuimos demasiados en la tierra, el polvo que
+            generabamos los millones de personas se convirtio en un problema, tapando
+            las plantas, impidiendoles asi hacer la fotosintesis, con esto las plantas
+            empezaron a morir y por consiguiente los herbiboros, mas tarde empezamos a 
+            sufrir nosotros su ausencia, y ahora buscamos un nuevo planeta entre las 
+            estrellas, solo esperamos no cometer el mismo error que con el primero.
+            '''
+        render_texto = pg.font.Font.render(self.historia, texto_historia, True, COLOR_TEXTO)
+        rectangulo_texto_historia = render_texto.get_rect()
+        rectangulo_texto_historia.centerx = self.pantalla.get_rect().centerx
+        rectangulo_texto_historia.centery = 300
+        self.pantalla.blit(render_texto, rectangulo_texto_historia)
         
