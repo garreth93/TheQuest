@@ -21,9 +21,8 @@ class Portada(Escena):
         fuente_titulo = os.path.join("resources", "fonts", "Arcadia.ttf")
         self.titulo = pg.font.Font(fuente_titulo, 90)
         fuente_texto = os.path.join("resources", "fonts", "Plaguard-ZVnjx.otf")
-        self.texto = pg.font.Font(fuente_texto, 40)
+        self.texto = pg.font.Font(fuente_texto, 40)        
         
-
         pg.mixer.music.load(os.path.join("resources", "sounds", "mainmenu.ogg"))
         pg.mixer.music.play(-1)
 
@@ -42,9 +41,14 @@ class Portada(Escena):
                 if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
                     sys.exit()
 
+                if event.type == pg.QUIT:
+                    sys.exit()
+
+
             self.pantalla.blit(self.fondo_portada, (0,0))
             self.pintar_titulo()
-            self.pintar_opciones()                   
+            self.pintar_opciones()
+                              
             pg.display.flip()
 
     def pintar_titulo(self):
@@ -68,6 +72,7 @@ class Portada(Escena):
         self.pantalla.blits(
             [(render_comenzar, (posx_comenzar, ALTO - 300)),
                (render_salir, (posx_salir, ALTO - 250))])
+    
 
 
 class Instrucciones(Escena):
@@ -85,6 +90,9 @@ class Instrucciones(Escena):
                     salir = True
                 
                 if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
+                    sys.exit()
+
+                if event.type == pg.QUIT:
                     sys.exit()
 
             self.pantalla.blit(self.instrucciones_img, (0,0))                 
@@ -108,14 +116,54 @@ class Historia(Escena):
                 if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
                     sys.exit()
 
+                if event.type == pg.QUIT:
+                    sys.exit()
+
             self.pantalla.blit(self.historia_imagen, (0,0))                 
             pg.display.flip()
 
 class Partida(Escena):
     def __init__(self, pantalla: pg.Surface):
         super().__init__(pantalla)
+        self.fondo = pg.image.load(os.path.join("resources", "images", "fondo_juego.png"))        
+        self.x = 0
+        self.y = 0       
         
 
+    def bucle_principal(self):
+        '''Este es el bucle principal'''
+        #Frena la música del menú
+        pg.mixer.music.stop()
+        #Empieza la música ingame
+        pg.mixer.music.load(os.path.join("resources", "sounds", "musica_ingame.ogg"))
+        pg.mixer.music.play()
+
+        salir = False
+        while not salir:
+            for event in pg.event.get():
+                if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
+                    salir = True
+                
+                if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
+                    sys.exit()
+
+                if event.type == pg.QUIT:
+                    sys.exit()
+
+            #Movimiento del fondo
+            x_relativa = self.x % self.fondo.get_rect().width
+            self.pantalla.blit(self.fondo, (x_relativa - self.fondo.get_rect().width,self.y))
+            if x_relativa < ANCHO:
+                self.pantalla.blit(self.fondo, (x_relativa, 0))
+            self.x -= 1
+            #Control de FPS
+            self.reloj.tick(60)
+            #Actualizacion de la ventana
+            pg.display.update()            
+
+    
+
+    
 
         
         
