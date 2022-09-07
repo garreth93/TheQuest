@@ -16,7 +16,7 @@ class Nave(Sprite):
         self.pantalla_rect = tq_game.pantalla.get_rect()
 
         # Cargar imagen de nave
-        self.nave_imagen = pg.image.load(os.path.join("resources", "images", "Main Ship.png"))
+        self.nave_imagen = pg.image.load(os.path.join("resources", "images", "Main_Ship.png"))
 
         # Rotacion de la imagen
         self.nave_imagen = pg.transform.rotate(self.nave_imagen, -90)
@@ -45,5 +45,28 @@ class Nave(Sprite):
         self.rect.y = self.y
 
     def blitNave(self):
+        # Pintar imagen de la nave
         self.pantalla.blit(self.nave_imagen, self.rect)
 
+class Asteroide(Sprite):
+
+    TAMAÑO_ASTER = (700, 600)
+
+    def __init__(self, tq_game):
+        super().__init__()
+        self.pantalla = tq_game.pantalla
+        self.pantalla_rect = tq_game.pantalla.get_rect()
+
+        # Cargar imagen de asteroide
+        self.aster_imagen = pg.image.load(os.path.join("resources", "images", "asteroide.png"))
+
+        # Escalado de imagen
+
+        self.aster_imagen = pg.transform.scale(self.aster_imagen, self.TAMAÑO_ASTER)
+    
+    def generarAsteroides(self):
+        pass
+    
+
+    def blitast(self):
+        self.pantalla.blit(self.aster_imagen, (50, 50))

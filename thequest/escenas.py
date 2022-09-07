@@ -3,7 +3,7 @@ import os
 import pygame as pg
 
 from . import ANCHO, ALTO, COLOR_TEXTO, FPS
-from .entidades import Nave
+from .entidades import Nave, Asteroide
 
 class Escena:
     def __init__(self, pantalla: pg.Surface):
@@ -125,7 +125,11 @@ class Partida(Escena):
         self.fondo = pg.image.load(os.path.join("resources", "images", "fondo_juego.png"))        
         self.x = 0
         self.y = 0       
+
+        # Instanciamos la clase Nave
         self.jugador = Nave(self)
+
+        self.asteroide = Asteroide(self)
 
     def bucle_principal(self):
         '''Este es el bucle principal'''
@@ -153,6 +157,7 @@ class Partida(Escena):
                 self.pantalla.blit(self.fondo, (x_relativa, 0))
             self.x -= 1
 
+            self.asteroide.blitast()
 
             # Pintar jugador
             self.jugador.blitNave()
