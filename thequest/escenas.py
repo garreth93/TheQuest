@@ -1,3 +1,4 @@
+# Importaciones necesarias para el funcionamiento del juego
 import sys
 import os
 import pygame as pg
@@ -5,32 +6,42 @@ import pygame as pg
 from . import ANCHO, ALTO, COLOR_TEXTO, FPS
 from .entidades import Nave, Asteroide
 
+# Creacion de la clase padre de todas
 class Escena:
     def __init__(self, pantalla: pg.Surface):
         self.pantalla = pantalla
+
+        # Instanciamiento de la clase Clock, para definir los FPS
         self.reloj = pg.time.Clock()
 
+        # Metodo del bucle principal, para que las demas escenas lo hereden
     def bucle_principal(self):
         pass
 
 
 class Portada(Escena):
+    '''Clase para el menú principal, 
+    hereda directamente de la clase Escena'''
     def __init__(self, pantalla: pg.Surface):
         super().__init__(pantalla)
+
+        # Carga de recursos, titulo, fondo, fuentes...
         self.fondo_portada = pg.image.load(os.path.join("resources", "images", "fondo.png"))
         fuente_titulo = os.path.join("resources", "fonts", "Arcadia.ttf")
         self.titulo = pg.font.Font(fuente_titulo, 90)
         fuente_texto = os.path.join("resources", "fonts", "Plaguard-ZVnjx.otf")
         self.texto = pg.font.Font(fuente_texto, 40)        
         
+        # Musica del menú principal
         pg.mixer.music.load(os.path.join("resources", "sounds", "mainmenu.ogg"))
         pg.mixer.music.play(-1)
 
     def bucle_principal(self):
         '''Este es el bucle principal'''
-
+        
         salir = False
         while not salir:
+            # Definimos las teclas para navegar por el juego y salir del mismo
             for event in pg.event.get():
                 if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
                     salir = True            
@@ -41,7 +52,7 @@ class Portada(Escena):
                 if event.type == pg.QUIT:
                     sys.exit()
 
-
+            # Pintar el fondo de la portada, con titulo y opciones
             self.pantalla.blit(self.fondo_portada, (0,0))
             self.pintar_titulo()
             self.pintar_opciones()
@@ -49,20 +60,24 @@ class Portada(Escena):
             pg.display.flip()
 
     def pintar_titulo(self):
+        # Metodo para mostrar el titulo del juego en pantalla
         nombre_titulo = "The Quest"
         texto = pg.font.Font.render(self.titulo, nombre_titulo, True, COLOR_TEXTO)
         ancho_texto = texto.get_width()
+        # Posicionamiento 
         pos_x = (ANCHO - ancho_texto)/2
         pos_y = ALTO - 650
         self.pantalla.blit(texto, (pos_x, pos_y))
 
     def pintar_opciones(self):
+        # Metodo para mostrar las opciones del menú de juego
         opcion_comenzar = "COMENZAR PARTIDA - (SPACE)"        
         opcion_salir = "SALIR - (ESC)"
 
         render_comenzar = pg.font.Font.render(self.texto, opcion_comenzar, True, COLOR_TEXTO)        
         render_salir = pg.font.Font.render(self.texto, opcion_salir, True, COLOR_TEXTO)
         
+        # Posicionamiento de las opciones
         posx_comenzar = (ANCHO - render_comenzar.get_width()) / 2        
         posx_salir = (ANCHO - render_salir.get_width()) / 2
 
@@ -73,6 +88,8 @@ class Portada(Escena):
 
 
 class Instrucciones(Escena):
+    '''Clase para las instrucciones del juego, funcionamiento de
+    teclas y una breve explicación del juego '''
     def __init__(self, pantalla: pg.Surface):
         super().__init__(pantalla)
         self.instrucciones_img = pg.image.load(os.path.join("resources", "images", "instrucciones_image.png"))
@@ -127,9 +144,14 @@ class Partida(Escena):
         self.y = 0       
 
         # Instanciamos la clase Nave
-        self.jugador = Nave(self)
+        self.jugador = Nave(self)       
 
-        self.asteroide = Asteroide(self)
+        # Intancia de grupos de asteroides, generamos 10
+        self.asteroides = pg.sprite.Group()
+
+        for i in range(10):
+            self.asteroide = Asteroide(self)
+            self.asteroides.add(self.asteroide)
 
     def bucle_principal(self):
         '''Este es el bucle principal'''
@@ -155,9 +177,11 @@ class Partida(Escena):
             self.pantalla.blit(self.fondo, (x_relativa - self.fondo.get_rect().width,self.y))
             if x_relativa < ANCHO:
                 self.pantalla.blit(self.fondo, (x_relativa, 0))
-            self.x -= 1
-
-            self.asteroide.blitast()
+            self.x -= 1           
+            
+            # Genera asteroides y los pinta
+            self.asteroide.blitAster()
+            self.asteroide.refrescarAster()
 
             # Pintar jugador
             self.jugador.blitNave()

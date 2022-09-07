@@ -1,4 +1,5 @@
 import os
+import random
 
 import pygame as pg
 from . import ALTO, ANCHO
@@ -49,8 +50,9 @@ class Nave(Sprite):
         self.pantalla.blit(self.nave_imagen, self.rect)
 
 class Asteroide(Sprite):
-
-    TAMAÑO_ASTER = (700, 600)
+    SIZE_SMALL_ASTER = (500, 500)
+    SIZE_MEDIUM_ASTER = (700, 700)
+    SIZE_BIG_ASTER = (900, 900)    
 
     def __init__(self, tq_game):
         super().__init__()
@@ -60,13 +62,43 @@ class Asteroide(Sprite):
         # Cargar imagen de asteroide
         self.aster_imagen = pg.image.load(os.path.join("resources", "images", "asteroide.png"))
 
-        # Escalado de imagen
-
-        self.aster_imagen = pg.transform.scale(self.aster_imagen, self.TAMAÑO_ASTER)
     
-    def generarAsteroides(self):
-        pass
-    
+        '''Esta parte sirve para aleatorizar la 
+        aparicion de asteroides en pantalla de manera que por
+        cada vuelta de ciclo se instancie una imagen con un escalado
+        diferente'''
+        self.aster_random = random.randrange(3)
+        if self.aster_random == 0:
+            self.aster_imagen = pg.transform.scale(self.aster_imagen, self.SIZE_SMALL_ASTER)
+            self.radio = 250
+        elif self.aster_random == 1:
+            self.aster_imagen = pg.transform.scale(self.aster_imagen, self.SIZE_MEDIUM_ASTER)
+            self.radio = 350
+        elif self.aster_random == 2:
+            self.aster_imagen = pg.transform.scale(self.aster_imagen, self.SIZE_BIG_ASTER)
+            self.radio = 500
+        
+        '''
+        Con esta parte se generan aleatoriamente 
+        los asteroides por todo la pantalla y desde 
+        fuera del ancho''' 
+        self.rect = self.aster_imagen.get_rect()
+        self.rect.y = random.randrange(ALTO)
+        self.rect.x = +self.rect.width
+        
+        # Velocidad aleatoria del meteorito
+        self.velocidad_x = random.randrange(10, 20)
 
-    def blitast(self):
-        self.pantalla.blit(self.aster_imagen, (50, 50))
+    def refrescarAster(self):
+        '''Este metodo refresca los asteroides que salen 
+        por un lado de la pantalla para generar otros, dando 
+        la sensacion de continuidad'''
+        self.rect.x -= self.velocidad_x
+        if self.rect.right < 0:
+            self.rect.y = random.randrange(ALTO)
+            self.rect.x = +self.rect.width
+            self.velocidad_x = random.randrange(10, 20)
+
+    def blitAster(self):
+        self.pantalla.blit(self.aster_imagen, self.rect)
+    
