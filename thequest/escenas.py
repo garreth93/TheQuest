@@ -2,7 +2,7 @@ import sys
 import os
 import pygame as pg
 
-from . import ANCHO, ALTO, COLOR_FONDO, COLOR_TEXTO
+from . import ANCHO, ALTO, COLOR_TEXTO, FPS
 from .entidades import Nave
 
 class Escena:
@@ -33,10 +33,7 @@ class Portada(Escena):
         while not salir:
             for event in pg.event.get():
                 if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
-                    salir = True
-                
-                if event.type == pg.KEYDOWN and event.key == pg.K_h:
-                   salir = True 
+                    salir = True            
 
                 if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
                     sys.exit()
@@ -139,13 +136,15 @@ class Partida(Escena):
         pg.mixer.music.load(os.path.join("resources", "sounds", "musica_ingame.ogg"))
         pg.mixer.music.play()
 
-        salir = False
-        while not salir: 
+        self.salir = False
+        while not self.salir: 
             # Control de FPS
-            self.reloj.tick(60)                       
+            self.reloj.tick(FPS)                       
 
             # Revisor de eventos
             self.revisa_eventos()
+            # Refrescar posicion del jugador
+            self.jugador.actualizaNave()
             
             # Movimiento del fondo
             x_relativa = self.x % self.fondo.get_rect().width
@@ -154,8 +153,6 @@ class Partida(Escena):
                 self.pantalla.blit(self.fondo, (x_relativa, 0))
             self.x -= 1
 
-            # Refrescar posicion del jugador
-            self.jugador.actualizaNave()
 
             # Pintar jugador
             self.jugador.blitNave()

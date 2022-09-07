@@ -37,10 +37,10 @@ class Nave(Sprite):
     def actualizaNave(self):
 
         # Definiendo los limites de movimiento de la nave
-        if self.mueve_arriba and self.rect.top < self.pantalla_rect.top:
-            self.y += self.VELOCIDAD
-        if self.mueve_abajo and self.rect.bottom > 700:
+        if self.mueve_arriba and self.rect.top >= self.pantalla_rect.top:
             self.y -= self.VELOCIDAD
+        if self.mueve_abajo and self.rect.bottom <= self.pantalla_rect.bottom:
+            self.y += self.VELOCIDAD
 
         self.rect.y = self.y
 
