@@ -3,7 +3,7 @@ import os
 import pygame as pg
 
 from . import ANCHO, ALTO, COLOR_FONDO, COLOR_TEXTO
-
+from .entidades import Nave
 
 class Escena:
     def __init__(self, pantalla: pg.Surface):
@@ -128,42 +128,67 @@ class Partida(Escena):
         self.fondo = pg.image.load(os.path.join("resources", "images", "fondo_juego.png"))        
         self.x = 0
         self.y = 0       
-        
+        self.jugador = Nave(self)
 
     def bucle_principal(self):
         '''Este es el bucle principal'''
-        #Frena la música del menú
+        # Frena la música del menú
         pg.mixer.music.stop()
-        #Empieza la música ingame
+
+        # Empieza la música ingame
         pg.mixer.music.load(os.path.join("resources", "sounds", "musica_ingame.ogg"))
         pg.mixer.music.play()
 
         salir = False
-        while not salir:
-            for event in pg.event.get():
-                if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
-                    salir = True
-                
-                if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
-                    sys.exit()
+        while not salir: 
+            # Control de FPS
+            self.reloj.tick(60)                       
 
-                if event.type == pg.QUIT:
-                    sys.exit()
-
-            #Movimiento del fondo
+            # Revisor de eventos
+            self.revisa_eventos()
+            
+            # Movimiento del fondo
             x_relativa = self.x % self.fondo.get_rect().width
             self.pantalla.blit(self.fondo, (x_relativa - self.fondo.get_rect().width,self.y))
             if x_relativa < ANCHO:
                 self.pantalla.blit(self.fondo, (x_relativa, 0))
             self.x -= 1
-            #Control de FPS
-            self.reloj.tick(60)
-            #Actualizacion de la ventana
-            pg.display.update()            
 
+            # Refrescar posicion del jugador
+            self.jugador.actualizaNave()
+
+            # Pintar jugador
+            self.jugador.blitNave()
+
+            # Actualizacion de la ventana
+            pg.display.update()   
+
+    def revisa_eventos(self):
+        '''Aqui se revisara si hay eventos en el bucle principal'''
+        for event in pg.event.get():
+            # Opciones para salir del juego
+            if event.type == pg.QUIT:
+                    sys.exit()            
+            elif event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
+                    sys.exit()
+
+            # Controles de la nave
+            elif event.type == pg.KEYDOWN:
+                self.revisa_keydown(event)
+            elif event.type == pg.KEYUP:
+                self.revisa_keyup(event)
     
+    def revisa_keydown(self, event):
+        '''Responde a las PULSACIONES de las teclas'''
+        if event.key == pg.K_UP:
+            self.jugador.mueve_arriba = True
+        elif event.key == pg.K_DOWN:
+            self.jugador.mueve_abajo = True
 
+    def revisa_keyup(self, event):
+        '''Responde a las LIBERACIONES de las teclas'''
+        if event.key == pg.K_UP:
+            self.jugador.mueve_arriba = False
+        elif event.key == pg.K_DOWN:
+            self.jugador.mueve_abajo = False
     
-
-        
-        
