@@ -146,11 +146,11 @@ class Partida(Escena):
         # Instanciamos la clase Nave
         self.jugador = Nave(self)       
 
-        # Intancia de grupos de asteroides, generamos 10
+        # Instancia de grupos de asteroides, generamos 10
         self.asteroides = pg.sprite.Group()
 
         for i in range(10):
-            self.asteroide = Asteroide(self)
+            self.asteroide = Asteroide()
             self.asteroides.add(self.asteroide)
 
     def bucle_principal(self):
@@ -160,7 +160,7 @@ class Partida(Escena):
 
         # Empieza la música ingame
         pg.mixer.music.load(os.path.join("resources", "sounds", "musica_ingame.ogg"))
-        pg.mixer.music.play()
+        pg.mixer.music.play(-1)
 
         self.salir = False
         while not self.salir: 
@@ -180,7 +180,7 @@ class Partida(Escena):
             self.x -= 1           
             
             # Genera asteroides y los pinta
-            self.asteroide.blitAster()
+            self.asteroides.draw(self.pantalla)
             self.asteroide.refrescarAster()
 
             # Pintar jugador
