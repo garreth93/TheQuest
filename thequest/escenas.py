@@ -149,9 +149,9 @@ class Partida(Escena):
         # Instancia de grupos de asteroides, generamos 10
         self.asteroides = pg.sprite.Group()
 
-        for i in range(10):
-            self.asteroide = Asteroide()
-            self.asteroides.add(self.asteroide)
+        for i in range(5):
+            asteroide = Asteroide()
+            self.asteroides.add(asteroide)
 
     def bucle_principal(self):
         '''Este es el bucle principal'''
@@ -169,6 +169,7 @@ class Partida(Escena):
 
             # Revisor de eventos
             self.revisa_eventos()
+
             # Refrescar posicion del jugador
             self.jugador.actualizaNave()
             
@@ -180,8 +181,9 @@ class Partida(Escena):
             self.x -= 1           
             
             # Genera asteroides y los pinta
+            self.asteroides.update()
             self.asteroides.draw(self.pantalla)
-            self.asteroide.refrescarAster()
+            
 
             # Pintar jugador
             self.jugador.blitNave()

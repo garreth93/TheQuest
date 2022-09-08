@@ -58,7 +58,7 @@ class Asteroide(Sprite):
     def __init__(self):
         super().__init__()
         # Cargar imagen de asteroide
-        self.aster_imagen = pg.image.load(os.path.join("resources", "images", "asteroide.png"))
+        self.image = pg.image.load(os.path.join("resources", "images", "asteroide.png"))
 
     
         '''Esta parte sirve para aleatorizar la 
@@ -67,20 +67,20 @@ class Asteroide(Sprite):
         diferente'''
         self.aster_random = random.randrange(0, 2)
         if self.aster_random == 0:
-            self.aster_imagen = pg.transform.scale(self.aster_imagen, self.SIZE_SMALL_ASTER)
+            self.image = pg.transform.scale(self.image, self.SIZE_SMALL_ASTER)
             
         elif self.aster_random == 1:
-            self.aster_imagen = pg.transform.scale(self.aster_imagen, self.SIZE_MEDIUM_ASTER)
+            self.image = pg.transform.scale(self.image, self.SIZE_MEDIUM_ASTER)
             
         elif self.aster_random == 2:
-            self.aster_imagen = pg.transform.scale(self.aster_imagen, self.SIZE_BIG_ASTER)
+            self.image = pg.transform.scale(self.image, self.SIZE_BIG_ASTER)
             
         
         '''
         Con esta parte se generan aleatoriamente 
         los asteroides por todo la pantalla y desde 
         fuera del ancho''' 
-        self.rect = self.aster_imagen.get_rect()
+        self.rect = self.image.get_rect()
         self.margen_asteroide = (ALTO - self.rect.height)
         self.rect.y = random.randrange(self.margen_asteroide)
         self.rect.x = +self.rect.width
@@ -88,7 +88,7 @@ class Asteroide(Sprite):
         # Velocidad aleatoria del meteorito
         self.velocidad_x = random.randrange(5, 15)
 
-    def refrescarAster(self):
+    def update(self):
         '''Este metodo refresca los asteroides que salen 
         por un lado de la pantalla para generar otros, dando 
         la sensacion de continuidad'''
@@ -98,6 +98,5 @@ class Asteroide(Sprite):
             self.rect.x = +self.rect.width
             self.velocidad_x = random.randrange(5, 15)
 
-    def blitAster(self):
-        self.pantalla.blit(self.aster_imagen, self.rect)
+
     
