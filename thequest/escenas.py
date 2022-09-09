@@ -149,7 +149,7 @@ class Partida(Escena):
         # Instancia de grupos de asteroides, generamos 10
         self.asteroides = pg.sprite.Group()
 
-        for i in range(5):
+        for i in range(15):
             asteroide = Asteroide()
             self.asteroides.add(asteroide)
 

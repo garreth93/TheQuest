@@ -5,6 +5,7 @@ import pygame as pg
 from thequest.escenas import Historia, Portada, Instrucciones, Partida
 from thequest import ALTO, ANCHO
 
+
 # Clase principal del juego para gestionar escenas y que el juego se ejecute
 class Thequest:
     # Metodo init para inicializar la ventana de juego y otras funcionalidades

@@ -2,13 +2,13 @@ import os
 import random
 
 import pygame as pg
-from . import ALTO, ANCHO
+from . import ALTO, ANCHO, NEGRO
 from pygame.sprite import Sprite
 
 class Nave(Sprite):
 
     MARGEN_LATERAL = 20
-    VELOCIDAD = 5
+    VELOCIDAD = 8
     TAMAÑO_NAVE = (80, 80)   
 
     def __init__(self, tq_game):
@@ -51,9 +51,9 @@ class Nave(Sprite):
 
 class Asteroide(Sprite):
     # Establezco tamaños predeterminados de asteroides como atributos de clase
-    SIZE_SMALL_ASTER = (500, 400)
-    SIZE_MEDIUM_ASTER = (700, 600)
-    SIZE_BIG_ASTER = (900, 800)    
+    SIZE_SMALL_ASTER = (50, 50)
+    SIZE_MEDIUM_ASTER = (75, 75)
+    SIZE_BIG_ASTER = (100, 100)    
     
     def __init__(self):
         super().__init__()
@@ -65,7 +65,7 @@ class Asteroide(Sprite):
         aparicion de asteroides en pantalla de manera que por
         cada vuelta de ciclo se instancie una imagen con un escalado
         diferente'''
-        self.aster_random = random.randrange(0, 2)
+        self.aster_random = random.randrange(0, 3)
         if self.aster_random == 0:
             self.image = pg.transform.scale(self.image, self.SIZE_SMALL_ASTER)
             
@@ -79,14 +79,14 @@ class Asteroide(Sprite):
         '''
         Con esta parte se generan aleatoriamente 
         los asteroides por todo la pantalla y desde 
-        fuera del ancho''' 
+        fuera del ancho'''        
         self.rect = self.image.get_rect()
         self.margen_asteroide = (ALTO - self.rect.height)
-        self.rect.y = random.randrange(self.margen_asteroide)
-        self.rect.x = +self.rect.width
+        self.rect.y = random.randrange(0, self.margen_asteroide)
+        self.rect.x = ANCHO + self.rect.width
         
         # Velocidad aleatoria del meteorito
-        self.velocidad_x = random.randrange(5, 15)
+        self.velocidad_x = random.randrange(5, 10)
 
     def update(self):
         '''Este metodo refresca los asteroides que salen 
@@ -94,9 +94,9 @@ class Asteroide(Sprite):
         la sensacion de continuidad'''
         self.rect.x -= self.velocidad_x
         if self.rect.right < 0:
-            self.rect.y = random.randrange(self.margen_asteroide)
-            self.rect.x = +self.rect.width
-            self.velocidad_x = random.randrange(5, 15)
+            self.rect.y = random.randrange(0, self.margen_asteroide)
+            self.rect.x = ANCHO + self.rect.width
+            self.velocidad_x = random.randrange(5, 10)
 
 
     
