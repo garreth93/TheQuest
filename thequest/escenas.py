@@ -1,6 +1,8 @@
 # Importaciones necesarias para el funcionamiento del juego
+from multiprocessing.synchronize import Event
 import sys
 import os
+import time
 import pygame as pg
 
 from . import ANCHO, ALTO, COLOR_TEXTO, FPS
@@ -141,7 +143,12 @@ class Partida(Escena):
         super().__init__(pantalla)
         self.fondo = pg.image.load(os.path.join("resources", "images", "fondo_juego.png"))        
         self.x = 0
-        self.y = 0       
+        self.y = 0
+        fuente = os.path.join("resources", "fonts", "Arcadia.ttf")
+        self.fuente_vidas = pg.font.Font(fuente, 20)
+
+        #Variable para numero de vidas
+        self.vidas = 3
 
         # Instanciamos la clase Nave
         self.jugador = Nave(self)       
@@ -150,8 +157,8 @@ class Partida(Escena):
         self.asteroides = pg.sprite.Group()
 
         for i in range(15):
-            asteroide = Asteroide()
-            self.asteroides.add(asteroide)
+            self.asteroide = Asteroide()
+            self.asteroides.add(self.asteroide)
 
     def bucle_principal(self):
         '''Este es el bucle principal'''
@@ -172,6 +179,8 @@ class Partida(Escena):
 
             # Refrescar posicion del jugador
             self.jugador.actualizaNave()
+            # Colisiones con asteroides
+            self.colision()
             
             # Movimiento del fondo
             x_relativa = self.x % self.fondo.get_rect().width
@@ -182,12 +191,12 @@ class Partida(Escena):
             
             # Genera asteroides y los pinta
             self.asteroides.update()
-            self.asteroides.draw(self.pantalla)
-            
+            self.asteroides.draw(self.pantalla)            
 
             # Pintar jugador
             self.jugador.blitNave()
-
+            #Texto Vidas
+            self.contador_vidas()               
             # Actualizacion de la ventana
             pg.display.update()   
 
@@ -220,3 +229,34 @@ class Partida(Escena):
         elif event.key == pg.K_DOWN:
             self.jugador.mueve_abajo = False
     
+    def colision(self):
+        colision_nave = pg.sprite.spritecollide(self.jugador, self.asteroides, True, pg.sprite.collide_circle)
+        if colision_nave:
+            self.vidas -= 1
+            if self.vidas == 2:                
+                self.asteroides.add(self.asteroide)
+            elif self.vidas == 1:
+                self.asteroides.add(self.asteroide)
+            self.jugador.nave_imagen = pg.image.load(os.path.join("resources", "images", "explosion.png"))
+            
+        if self.jugador.mueve_abajo == True or self.jugador.mueve_arriba == True:
+            self.jugador.nave_imagen = pg.image.load(os.path.join("resources", "images", "Main_Ship.png"))
+            self.jugador.nave_imagen = pg.transform.rotate(self.jugador.nave_imagen, -90)
+            self.jugador.nave_imagen = pg.transform.scale(self.jugador.nave_imagen, self.jugador.TAMAÑO_NAVE)
+        if self.vidas == 0:
+            pass
+    
+    def contador_vidas(self):
+        render_fuente = self.fuente_vidas.render("VIDAS:", True, COLOR_TEXTO)
+        rectangulo = render_fuente.get_rect()
+        x = 50
+        y = 20
+        rectangulo.center = (x, y)
+        self.pantalla.blit(render_fuente, rectangulo)
+
+        render_num = self.fuente_vidas.render(str(self.vidas), True, COLOR_TEXTO)
+        num_rect = render_num.get_rect()
+        num_x = 100
+        num_y = 20
+        num_rect.center = (num_x, num_y)
+        self.pantalla.blit(render_num, num_rect)

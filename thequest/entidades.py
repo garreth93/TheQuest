@@ -68,13 +68,13 @@ class Asteroide(Sprite):
         self.aster_random = random.randrange(0, 3)
         if self.aster_random == 0:
             self.image = pg.transform.scale(self.image, self.SIZE_SMALL_ASTER)
-            
+            self.radius = 10
         elif self.aster_random == 1:
             self.image = pg.transform.scale(self.image, self.SIZE_MEDIUM_ASTER)
-            
+            self.radius = 10
         elif self.aster_random == 2:
             self.image = pg.transform.scale(self.image, self.SIZE_BIG_ASTER)
-            
+            self.radius = 10
         
         '''
         Con esta parte se generan aleatoriamente 
