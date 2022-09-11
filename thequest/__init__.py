@@ -10,3 +10,4 @@ NEGRO = (0, 0, 0)
 
 # FPS del juego
 FPS = 60
+

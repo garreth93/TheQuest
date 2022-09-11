@@ -1,12 +1,15 @@
 # Importaciones necesarias para el funcionamiento del juego
-from multiprocessing.synchronize import Event
+
 import sys
 import os
-import time
+from time import sleep
+
 import pygame as pg
 
 from . import ANCHO, ALTO, COLOR_TEXTO, FPS
+from .configuracion import VIDAS
 from .entidades import Nave, Asteroide
+from .estadisticas_juego import GameStats
 
 # Creacion de la clase padre de todas
 class Escena:
@@ -141,14 +144,17 @@ class Historia(Escena):
 class Partida(Escena):
     def __init__(self, pantalla: pg.Surface):
         super().__init__(pantalla)
+        # Instancia para guardar las estadisticas del juego
+        self.estadisticas = GameStats(self) 
+
+        # Fondo del juego
         self.fondo = pg.image.load(os.path.join("resources", "images", "fondo_juego.png"))        
         self.x = 0
         self.y = 0
+
+        # Fuente para las vidas y marcador
         fuente = os.path.join("resources", "fonts", "Arcadia.ttf")
         self.fuente_vidas = pg.font.Font(fuente, 20)
-
-        #Variable para numero de vidas
-        self.vidas = 3
 
         # Instanciamos la clase Nave
         self.jugador = Nave(self)       
@@ -230,21 +236,24 @@ class Partida(Escena):
             self.jugador.mueve_abajo = False
     
     def colision(self):
+        '''Este metodo detecta las colisones que 
+        se producen en la nave con los asteroides y resta vidas'''
         colision_nave = pg.sprite.spritecollide(self.jugador, self.asteroides, True, pg.sprite.collide_circle)
         if colision_nave:
-            self.vidas -= 1
-            if self.vidas == 2:                
-                self.asteroides.add(self.asteroide)
-            elif self.vidas == 1:
-                self.asteroides.add(self.asteroide)
             self.jugador.nave_imagen = pg.image.load(os.path.join("resources", "images", "explosion.png"))
-            
-        if self.jugador.mueve_abajo == True or self.jugador.mueve_arriba == True:
+            #Disminuye las vidas
+            self.estadisticas.vidas_restantes -= 1
+            #Se deshace de los meteoritos en pantalla
+            self.asteroides.empty()
+            #Crea de nuevo los meteoritos
+            for i in range(15):
+                self.asteroide = Asteroide()
+                self.asteroides.add(self.asteroide)
+            #Una pausa para volver retomar el juego
+            sleep(1)
             self.jugador.nave_imagen = pg.image.load(os.path.join("resources", "images", "Main_Ship.png"))
-            self.jugador.nave_imagen = pg.transform.rotate(self.jugador.nave_imagen, -90)
-            self.jugador.nave_imagen = pg.transform.scale(self.jugador.nave_imagen, self.jugador.TAMAÑO_NAVE)
-        if self.vidas == 0:
-            pass
+
+        
     
     def contador_vidas(self):
         render_fuente = self.fuente_vidas.render("VIDAS:", True, COLOR_TEXTO)
@@ -254,7 +263,7 @@ class Partida(Escena):
         rectangulo.center = (x, y)
         self.pantalla.blit(render_fuente, rectangulo)
 
-        render_num = self.fuente_vidas.render(str(self.vidas), True, COLOR_TEXTO)
+        render_num = self.fuente_vidas.render(str(VIDAS), True, COLOR_TEXTO)
         num_rect = render_num.get_rect()
         num_x = 100
         num_y = 20
