@@ -259,4 +259,4 @@ class Partida(Escena):
         num_x = 100
         num_y = 20
         num_rect.center = (num_x, num_y)
-        self.pantalla.blit(render_num, num_rect)
+        self.pantalla.blit(render_num, num_rect)        
