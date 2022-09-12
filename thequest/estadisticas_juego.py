@@ -3,7 +3,10 @@ class GameStats():
     
     def __init__(self, tq_game):
         self.config = tq_game.config
-        self.reiniciar_stats()                
+        self.reiniciar_stats()
+
+        # Bandera de juego en activo
+        self.juego_activo = True                
 
     def reiniciar_stats(self):
         '''Inicializa las estadisticas que pueden cambiar durante el juego'''

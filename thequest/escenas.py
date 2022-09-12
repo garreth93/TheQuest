@@ -157,9 +157,10 @@ class Partida(Escena):
         self.x = 0
         self.y = 0
 
-        # Fuente para las vidas y marcador
+        # Fuente para las vidas, marcador y game over
         fuente = os.path.join("resources", "fonts", "Arcadia.ttf")
         self.fuente_vidas = pg.font.Font(fuente, 20)
+        self.fuente_game_over = pg.font.Font(fuente, 50)
 
         # Instanciamos la clase Nave
         self.jugador = Nave(self)       
@@ -188,34 +189,38 @@ class Partida(Escena):
             # Revisor de eventos
             self.revisa_eventos()
 
-            # Refrescar posicion del jugador
-            self.jugador.actualizaNave()
-            # Colisiones con asteroides
-            self.colision()
-            
-            # Movimiento del fondo
-            x_relativa = self.x % self.fondo.get_rect().width
-            self.pantalla.blit(self.fondo, (x_relativa - self.fondo.get_rect().width,self.y))
-            if x_relativa < ANCHO:
-                self.pantalla.blit(self.fondo, (x_relativa, 0))
-            self.x -= 1           
-            
-            # Genera asteroides y los pinta
-            self.asteroides.update()
-            self.asteroides.draw(self.pantalla)
+            if self.estadisticas.juego_activo:
+
+                # Refrescar posicion del jugador
+                self.jugador.actualizaNave()
+                # Colisiones con asteroides
+                self.colision()
+                
+                # Movimiento del fondo
+                x_relativa = self.x % self.fondo.get_rect().width
+                self.pantalla.blit(self.fondo, (x_relativa - self.fondo.get_rect().width,self.y))
+                if x_relativa < ANCHO:
+                    self.pantalla.blit(self.fondo, (x_relativa, 0))
+                self.x -= 1           
+                
+                # Genera asteroides y los pinta
+                self.asteroides.update()
+                self.asteroides.draw(self.pantalla)
 
 
-            # Pinta la puntuacion
-            self.puntuacion.mostrar_puntuacion()          
-            # Contador de puntos
-            self.contador_puntos()
+                # Pinta la puntuacion
+                self.puntuacion.mostrar_puntuacion()          
+                # Contador de puntos
+                self.contador_puntos()
 
-            # Pintar jugador
-            self.jugador.blitNave()
-            #Texto Vidas
-            self.contador_vidas()               
-            # Actualizacion de la ventana
-            pg.display.update()   
+                # Pintar jugador
+                self.jugador.blitNave()
+                #Texto Vidas
+                self.contador_vidas()        
+                # Metodo para comprobar el game over
+                self.game_over()       
+                # Actualizacion de la ventana
+                pg.display.update()   
 
     def revisa_eventos(self):
         '''Aqui se revisara si hay eventos en el bucle principal'''
@@ -246,21 +251,24 @@ class Partida(Escena):
         elif event.key == pg.K_DOWN:
             self.jugador.mueve_abajo = False
     
-    def colision(self):
+    def colision(self): #TODO Image de colision y sonido
         '''Este metodo detecta las colisones que 
         se producen en la nave con los asteroides y resta vidas'''
         self.colision_nave = pg.sprite.spritecollide(self.jugador, self.asteroides, True, pg.sprite.collide_circle)
         if self.colision_nave:
             #self.jugador.nave_imagen = pg.image.load(os.path.join("resources", "images", "explosion.png"))
-            #Disminuye las vidas
+            # Disminuye las vidas
             self.estadisticas.vidas_restantes -= 1
-            #Se deshace de los meteoritos en pantalla
+            # Comprueba si las vidas llegan a 0 para activar el game over
+            if self.estadisticas.vidas_restantes == 0:
+                self.estadisticas.juego_activo = False
+            # Se deshace de los meteoritos en pantalla
             self.asteroides.empty()
-            #Crea de nuevo los meteoritos
+            # Crea de nuevo los meteoritos
             for i in range(15):
                 self.asteroide = Asteroide()
                 self.asteroides.add(self.asteroide)
-            #Una pausa para volver retomar el juego
+            # Una pausa para volver retomar el juego
             sleep(1)
             #self.jugador.nave_imagen = pg.image.load(os.path.join("resources", "images", "Main_Ship.png"))
 
@@ -296,3 +304,21 @@ class Partida(Escena):
             self.estadisticas.puntuacion -= self.config.aster_colision
                
         self.puntuacion.iniciar_puntuacion()
+
+    def game_over(self):
+        mensaje1 = "HAS PERDIDO"
+        mensaje2 = "Pulsa (ESC) para salir del juego"
+        if self.estadisticas.juego_activo == False:
+            render_msg1 = pg.font.Font.render(self.fuente_game_over, mensaje1, True, COLOR_TEXTO)
+            render_msg2 = pg.font.Font.render(self.fuente_game_over, mensaje2, True, COLOR_TEXTO)
+            
+            msg1_width = render_msg1.get_width()
+            msg2_width = render_msg2.get_width()
+
+            msg1_x = (ANCHO - msg1_width)/2
+            msg2_x = (ANCHO - msg2_width)/2
+
+            self.pantalla.blits(
+            [(render_msg1, (msg1_x, ALTO - 600)),
+               (render_msg2, (msg2_x, ALTO - 500))])
+
