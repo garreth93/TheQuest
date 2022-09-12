@@ -93,7 +93,7 @@ class Asteroide(Sprite):
         por un lado de la pantalla para generar otros, dando 
         la sensacion de continuidad'''
         self.rect.x -= self.velocidad_x
-        if self.rect.right < 0:
+        if self.rect.right < -10:
             self.rect.y = random.randrange(0, self.margen_asteroide)
             self.rect.x = ANCHO + self.rect.width
             self.velocidad_x = random.randrange(5, 10)

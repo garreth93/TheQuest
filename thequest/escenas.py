@@ -167,7 +167,7 @@ class Partida(Escena):
         # Instancia de grupos de asteroides, generamos 10
         self.asteroides = pg.sprite.Group()
 
-        for i in range(15):
+        for i in range(10):
             self.asteroide = Asteroide()
             self.asteroides.add(self.asteroide)
 
@@ -204,8 +204,11 @@ class Partida(Escena):
             self.asteroides.update()
             self.asteroides.draw(self.pantalla)
 
+
             # Pinta la puntuacion
             self.puntuacion.mostrar_puntuacion()          
+            # Contador de puntos
+            self.contador_puntos()
 
             # Pintar jugador
             self.jugador.blitNave()
@@ -246,8 +249,8 @@ class Partida(Escena):
     def colision(self):
         '''Este metodo detecta las colisones que 
         se producen en la nave con los asteroides y resta vidas'''
-        colision_nave = pg.sprite.spritecollide(self.jugador, self.asteroides, True, pg.sprite.collide_circle)
-        if colision_nave:
+        self.colision_nave = pg.sprite.spritecollide(self.jugador, self.asteroides, True, pg.sprite.collide_circle)
+        if self.colision_nave:
             #self.jugador.nave_imagen = pg.image.load(os.path.join("resources", "images", "explosion.png"))
             #Disminuye las vidas
             self.estadisticas.vidas_restantes -= 1
@@ -278,14 +281,18 @@ class Partida(Escena):
         num_rect.center = (num_x, num_y)
         self.pantalla.blit(render_num, num_rect)
     
-    def contador_puntos(self):
-        if self.asteroide.rect.right < ANCHO:
-            if self.asteroide.aster_random == 0:
+    def contador_puntos(self):         
+        if self.asteroide.aster_random == 0: 
+            if self.asteroide.rect.right < 0:
                 self.estadisticas.puntuacion += self.config.aster_small_puntos
-            elif self.asteroide.aster_random == 1:
+        elif self.asteroide.aster_random == 1: 
+            if self.asteroide.rect.right < 0:
                 self.estadisticas.puntuacion += self.config.aster_medium_puntos
-            elif self.asteroide.aster_random == 2:
+        elif self.asteroide.aster_random == 2:
+            if self.asteroide.rect.right < 0: 
                 self.estadisticas.puntuacion += self.config.aster_big_puntos
         
-        if self.colision():
+        if self.colision_nave:
             self.estadisticas.puntuacion -= self.config.aster_colision
+               
+        self.puntuacion.iniciar_puntuacion()

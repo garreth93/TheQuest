@@ -19,9 +19,8 @@ class Puntuaciones:
         self.iniciar_puntuacion()
 
     def iniciar_puntuacion(self):
-        '''Renderiza la fuente en imagen'''
-        puntuacionStr = str(self.stats.puntuacion)
-        self.puntuacion_render = self.fuente.render(puntuacionStr, True, COLOR_TEXTO, COLOR_FONDO)
+        '''Renderiza la fuente en imagen'''        
+        self.puntuacion_render = self.fuente.render(str(self.stats.puntuacion), True, COLOR_TEXTO, COLOR_FONDO)
 
         # Mostrar puntuacion en la parte superior derecha
         self.puntuacion_rect = self.puntuacion_render.get_rect()
