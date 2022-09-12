@@ -6,7 +6,8 @@ class GameStats():
         self.reiniciar_stats()
 
         # Bandera de juego en activo
-        self.juego_activo = True                
+        self.juego_activo = True     
+                        
 
     def reiniciar_stats(self):
         '''Inicializa las estadisticas que pueden cambiar durante el juego'''
