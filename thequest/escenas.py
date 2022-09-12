@@ -7,7 +7,7 @@ from time import sleep
 import pygame as pg
 
 from . import ANCHO, ALTO, COLOR_TEXTO, FPS
-from .configuracion import VIDAS
+from .configuracion import Config
 from .entidades import Nave, Asteroide
 from .estadisticas_juego import GameStats
 
@@ -144,6 +144,7 @@ class Historia(Escena):
 class Partida(Escena):
     def __init__(self, pantalla: pg.Surface):
         super().__init__(pantalla)
+        self.config = Config()
         # Instancia para guardar las estadisticas del juego
         self.estadisticas = GameStats(self) 
 
@@ -240,7 +241,7 @@ class Partida(Escena):
         se producen en la nave con los asteroides y resta vidas'''
         colision_nave = pg.sprite.spritecollide(self.jugador, self.asteroides, True, pg.sprite.collide_circle)
         if colision_nave:
-            self.jugador.nave_imagen = pg.image.load(os.path.join("resources", "images", "explosion.png"))
+            #self.jugador.nave_imagen = pg.image.load(os.path.join("resources", "images", "explosion.png"))
             #Disminuye las vidas
             self.estadisticas.vidas_restantes -= 1
             #Se deshace de los meteoritos en pantalla
@@ -251,7 +252,7 @@ class Partida(Escena):
                 self.asteroides.add(self.asteroide)
             #Una pausa para volver retomar el juego
             sleep(1)
-            self.jugador.nave_imagen = pg.image.load(os.path.join("resources", "images", "Main_Ship.png"))
+            #self.jugador.nave_imagen = pg.image.load(os.path.join("resources", "images", "Main_Ship.png"))
 
         
     
@@ -263,7 +264,7 @@ class Partida(Escena):
         rectangulo.center = (x, y)
         self.pantalla.blit(render_fuente, rectangulo)
 
-        render_num = self.fuente_vidas.render(str(VIDAS), True, COLOR_TEXTO)
+        render_num = self.fuente_vidas.render(str(self.estadisticas.vidas_restantes), True, COLOR_TEXTO)
         num_rect = render_num.get_rect()
         num_x = 100
         num_y = 20
