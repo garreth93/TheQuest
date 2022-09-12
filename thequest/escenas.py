@@ -1,5 +1,6 @@
 # Importaciones necesarias para el funcionamiento del juego
 
+from calendar import TUESDAY
 import sys
 import os
 from time import sleep
@@ -10,6 +11,7 @@ from . import ANCHO, ALTO, COLOR_TEXTO, FPS
 from .configuracion import Config
 from .entidades import Nave, Asteroide
 from .estadisticas_juego import GameStats
+from .puntuaciones import Puntuaciones
 
 # Creacion de la clase padre de todas
 class Escena:
@@ -145,8 +147,10 @@ class Partida(Escena):
     def __init__(self, pantalla: pg.Surface):
         super().__init__(pantalla)
         self.config = Config()
-        # Instancia para guardar las estadisticas del juego
-        self.estadisticas = GameStats(self) 
+        # Instancia para guardar las estadisticas del juego y crear un marcador
+        self.estadisticas = GameStats(self)
+        self.puntuacion = Puntuaciones(self)
+
 
         # Fondo del juego
         self.fondo = pg.image.load(os.path.join("resources", "images", "fondo_juego.png"))        
@@ -198,7 +202,10 @@ class Partida(Escena):
             
             # Genera asteroides y los pinta
             self.asteroides.update()
-            self.asteroides.draw(self.pantalla)            
+            self.asteroides.draw(self.pantalla)
+
+            # Pinta la puntuacion
+            self.puntuacion.mostrar_puntuacion()          
 
             # Pintar jugador
             self.jugador.blitNave()
@@ -269,4 +276,16 @@ class Partida(Escena):
         num_x = 100
         num_y = 20
         num_rect.center = (num_x, num_y)
-        self.pantalla.blit(render_num, num_rect)        
+        self.pantalla.blit(render_num, num_rect)
+    
+    def contador_puntos(self):
+        if self.asteroide.rect.right < ANCHO:
+            if self.asteroide.aster_random == 0:
+                self.estadisticas.puntuacion += self.config.aster_small_puntos
+            elif self.asteroide.aster_random == 1:
+                self.estadisticas.puntuacion += self.config.aster_medium_puntos
+            elif self.asteroide.aster_random == 2:
+                self.estadisticas.puntuacion += self.config.aster_big_puntos
+        
+        if self.colision():
+            self.estadisticas.puntuacion -= self.config.aster_colision

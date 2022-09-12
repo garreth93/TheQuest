@@ -3,7 +3,8 @@ class GameStats():
     
     def __init__(self, tq_game):
         self.config = tq_game.config
-        self.reiniciar_stats()        
+        self.reiniciar_stats()
+        self.puntuacion = 0        
 
     def reiniciar_stats(self):
         '''Inicializa las estadisticas que pueden cambiar durante el juego'''

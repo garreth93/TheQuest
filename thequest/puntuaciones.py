@@ -1,6 +1,6 @@
 import os
 import pygame.font
-from . import COLOR_TEXTO
+from . import COLOR_TEXTO, COLOR_FONDO
 
 class Puntuaciones:
     '''Clase para informar de la puntuacion obtenida'''
@@ -21,4 +21,13 @@ class Puntuaciones:
     def iniciar_puntuacion(self):
         '''Renderiza la fuente en imagen'''
         puntuacionStr = str(self.stats.puntuacion)
-        
+        self.puntuacion_render = self.fuente.render(puntuacionStr, True, COLOR_TEXTO, COLOR_FONDO)
+
+        # Mostrar puntuacion en la parte superior derecha
+        self.puntuacion_rect = self.puntuacion_render.get_rect()
+        self.puntuacion_rect.right = self.pantalla_rect.right - 20
+        self.puntuacion_rect.top = 20
+    
+    def mostrar_puntuacion(self):
+        '''Pinta la puntuacion'''
+        self.pantalla.blit(self.puntuacion_render, self.puntuacion_rect)
