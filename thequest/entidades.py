@@ -4,6 +4,8 @@ import random
 import pygame as pg
 from . import ALTO, ANCHO, NEGRO
 from pygame.sprite import Sprite
+from .configuracion import Config
+
 
 class Nave(Sprite):
 
@@ -59,8 +61,7 @@ class Asteroide(Sprite):
         super().__init__()
         # Cargar imagen de asteroide
         self.image = pg.image.load(os.path.join("resources", "images", "asteroide.png"))
-
-    
+        
         '''Esta parte sirve para aleatorizar la 
         aparicion de asteroides en pantalla de manera que por
         cada vuelta de ciclo se instancie una imagen con un escalado
@@ -68,13 +69,16 @@ class Asteroide(Sprite):
         self.aster_random = random.randrange(0, 3)
         if self.aster_random == 0:
             self.image = pg.transform.scale(self.image, self.SIZE_SMALL_ASTER)
+            self.aster_small_puntos = 20
             self.radius = 10
         elif self.aster_random == 1:
             self.image = pg.transform.scale(self.image, self.SIZE_MEDIUM_ASTER)
+            self.aster_medium_puntos = 50
             self.radius = 10
         elif self.aster_random == 2:
             self.image = pg.transform.scale(self.image, self.SIZE_BIG_ASTER)
             self.radius = 10
+            self.aster_big_puntos = 80        
         
         '''
         Con esta parte se generan aleatoriamente 
@@ -86,7 +90,7 @@ class Asteroide(Sprite):
         self.rect.x = ANCHO + self.rect.width
         
         # Velocidad aleatoria del meteorito
-        self.velocidad_x = random.randrange(5, 10)
+        self.velocidad_x = random.randrange(5, 10)        
 
     def update(self):
         '''Este metodo refresca los asteroides que salen 
@@ -98,5 +102,17 @@ class Asteroide(Sprite):
             self.rect.x = ANCHO + self.rect.width
             self.velocidad_x = random.randrange(5, 10)
 
+class Planeta(Sprite):
+    def __init__(self, tq_game):
+        super().__init__()
+        self.pantalla = tq_game.pantalla
+        self.pantalla_rect = tq_game.pantalla.get_rect()
+        self.planeta_imagen = pg.image.load(os.path.join("resources", "images", "planeta.png"))
+        self.planeta_rect = self.planeta_imagen.get_rect(midleft=(ANCHO + 5, ALTO/2))
+        self.velocidad_x = 5
+    def blit_planeta(self):
+     self.pantalla.blit(self.planeta_imagen, self.planeta_rect)
 
-    
+
+
+            
