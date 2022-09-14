@@ -265,7 +265,7 @@ class Partida(Escena):
         elif event.key == pg.K_DOWN:
             self.jugador.mueve_abajo = False
     
-    def colision(self): #TODO Image de colision y sonido
+    def colision(self): #FIXME Añadir imagen de colision
         '''Este metodo detecta las colisones que 
         se producen en la nave con los asteroides y resta vidas'''
 
@@ -310,7 +310,7 @@ class Partida(Escena):
         num_rect.center = (num_x, num_y)
         self.pantalla.blit(render_num, num_rect)
     
-    def contador_puntos(self): 
+    def contador_puntos(self): #FIXME Intentar reparar los puntos que dan los asteroides
         '''Este metodo sirve para ir contado los puntos que nos dan
         los diferentes tamaños de los asteroides'''    
         
@@ -350,7 +350,7 @@ class Partida(Escena):
             [(render_msg1, (msg1_x, ALTO - 600)),
                (render_msg2, (msg2_x, ALTO - 500))])
     
-    def nivel2(self):
+    def nivel2(self): #FIXME Reparar texto emergente del nivel 2
         if self.estadisticas.puntuacion > 200:            
             msg_leve2 = "NIVEL 2"
             self.render_msg = pg.font.Font.render(self.fuente_nivel2, msg_leve2, True, COLOR_TEXTO)                        
@@ -362,7 +362,7 @@ class Partida(Escena):
             self.pantalla.blit(self.render_msg, self.rect_textlevel)
             self.asteroide.velocidad_x = random.randrange(10, 15)
     
-    def ganar_partida(self):
+    def ganar_partida(self): #TODO Crear la condicion de victoria, hacer aparecer el planeta
         if self.estadisticas.puntuacion > 300:
             self.victoria = True
             self.planeta.blit_planeta()            
