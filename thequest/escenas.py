@@ -173,13 +173,14 @@ class Partida(Escena):
         # Instancia de grupos de asteroides, generamos 10
         self.asteroides = pg.sprite.Group()
 
-        for i in range(5):
+        for i in range(10):
             self.asteroide = Asteroide(self)
             self.asteroides.add(self.asteroide)
         
         # Instancia de la clase planeta
         self.planeta = Planeta(self)
 
+        self.momento_colision = 0
         
     def bucle_principal(self):
         '''Este es el bucle principal'''
@@ -223,7 +224,11 @@ class Partida(Escena):
                     self.asteroides.update()
                     # Pintar jugador
                     self.jugador.blitNave()
-                
+
+                print(f'Tiempo actual: {self.tiempo_actual} Momento de colision: {self.momento_colision}')
+                if self.tiempo_actual - self.momento_colision > 2:
+                    self.jugador.nave_imagen = pg.image.load(os.path.join("resources", "images", "Main_Ship.png"))
+                    
                 self.asteroides.draw(self.pantalla)
 
                 # Pinta la puntuacion
@@ -291,9 +296,7 @@ class Partida(Escena):
         if self.colision_nave:
             self.momento_colision = pg.time.get_ticks()//1000
             self.jugador.nave_imagen = pg.image.load(os.path.join("resources", "images", "explosion.png"))
-            print(f'Tiempo actual: {self.tiempo_actual} Momento de colision: {self.momento_colision}')
-            if self.tiempo_actual - self.momento_colision < 2000:
-                self.nave_imagen = pg.image.load(os.path.join("resources", "images", "Main_Ship.png"))
+           
             # Sonido de la colision
             impacto = pg.mixer.Sound(os.path.join("resources", "sounds" ,"impact.ogg"))
             pg.mixer.Sound.set_volume(impacto, 1)
@@ -306,14 +309,12 @@ class Partida(Escena):
             # Se deshace de los meteoritos en pantalla
             self.asteroides.empty()
             # Crea de nuevo los meteoritos
-            for i in range(10):
+            for i in range(15):
                 self.asteroide = Asteroide(self)               
                 self.asteroides.add(self.asteroide)
             # Una pausa para volver retomar el juego
             #sleep(1)
-    def refresca_colison(self):        
-        if self.tiempo_actual - self.momento_colision < 2000:
-            self.nave_imagen = pg.image.load(os.path.join("resources", "images", "Main_Ship.png"))
+    
     
     def contador_vidas(self):
         '''Metodo para cargar y mostrar el contador de vidas'''
@@ -355,7 +356,7 @@ class Partida(Escena):
     def nivel2(self):
         '''Crea un texto emergente que avisa de nivel 2 alcanzado, y
         aumenta la velocidad con la que son generados los asteroides'''
-        if self.estadisticas.puntuacion > 100:                       
+        if self.estadisticas.puntuacion > 200:                       
             self.asteroide.velocidad_x = random.randrange(10, 15)
             self.texto_level2.blitNivel2Text()
             self.texto_level2.rect_textlevel.y += self.texto_level2.velocidad_y
@@ -366,8 +367,8 @@ class Partida(Escena):
                 
             
     
-    def ganar_partida(self): #TODO Crear la condicion de victoria, hacer aparecer el planeta
-        if self.estadisticas.puntuacion > 1000:
+    def ganar_partida(self): #FIXME Terminar la animacion de victoria
+        if self.estadisticas.puntuacion > 300:
             self.victoria = True
             self.planeta.blit_planeta()            
             self.planeta.planeta_rect.x -= self.planeta.velocidad_x
@@ -379,9 +380,10 @@ class Partida(Escena):
             if self.nave_ganadora.rect.right == ANCHO - 300:
                 self.nave_ganadora.velocidad_x = 0
                 if self.nave_ganadora.velocidad_x == 0:
-                    self.nave_ganadora.angulo += 1                    
-                    self.nave_ganadora.nave_imagen = (pg.transform.rotate(self.nave_ganadora.nave_imagen, self.nave_ganadora.angulo))
-           
+                    for grados in range(0, 180): # Esto peta el juego
+                        self.nave_ganadora.angulo += grados                    
+                        self.nave_ganadora.nave_imagen = (pg.transform.rotate(self.nave_ganadora.nave_imagen, self.nave_ganadora.angulo))
+                        print(grados)
    
            
 
