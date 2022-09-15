@@ -159,7 +159,7 @@ class Partida(Escena):
         self.fondo = pg.image.load(os.path.join("resources", "images", "fondo_juego.png"))        
         self.x = 0
         self.y = 0
-
+    
         # Fuente para las vidas, marcador y game over
         fuente = os.path.join("resources", "fonts", "Arcadia.ttf")
         self.fuente_vidas = pg.font.Font(fuente, 20)
@@ -226,8 +226,8 @@ class Partida(Escena):
                     self.jugador.blitNave()
 
                 print(f'Tiempo actual: {self.tiempo_actual} Momento de colision: {self.momento_colision}')
-                if self.tiempo_actual - self.momento_colision > 2:
-                    self.jugador.nave_imagen = pg.image.load(os.path.join("resources", "images", "Main_Ship.png"))
+                if self.tiempo_actual - self.momento_colision > 1:
+                    self.jugador.nave_imagen = self.nave_imagen = pg.image.load(os.path.join("resources", "images", "Main_Ship.png"))
                     
                 self.asteroides.draw(self.pantalla)
 
@@ -356,7 +356,7 @@ class Partida(Escena):
     def nivel2(self):
         '''Crea un texto emergente que avisa de nivel 2 alcanzado, y
         aumenta la velocidad con la que son generados los asteroides'''
-        if self.estadisticas.puntuacion > 200:                       
+        if self.estadisticas.puntuacion > 500:                       
             self.asteroide.velocidad_x = random.randrange(10, 15)
             self.texto_level2.blitNivel2Text()
             self.texto_level2.rect_textlevel.y += self.texto_level2.velocidad_y
@@ -368,7 +368,7 @@ class Partida(Escena):
             
     
     def ganar_partida(self): #FIXME Terminar la animacion de victoria
-        if self.estadisticas.puntuacion > 300:
+        if self.estadisticas.puntuacion > 1000:
             self.victoria = True
             self.planeta.blit_planeta()            
             self.planeta.planeta_rect.x -= self.planeta.velocidad_x
