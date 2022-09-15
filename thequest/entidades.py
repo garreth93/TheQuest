@@ -33,6 +33,9 @@ class Nave(Sprite):
         # Guardado el valor decimal para la posicion vertical de la nave
         self.y = float(self.rect.y)
 
+        # Velocidad para animacion X
+        self.velocidad_x = 1
+
         # Chivatos de movimiento 
         self.mueve_arriba = False
         self.mueve_abajo = False
@@ -50,6 +53,7 @@ class Nave(Sprite):
     def blitNave(self):
         # Pintar imagen de la nave
         self.pantalla.blit(self.nave_imagen, self.rect)
+       
 
 class Asteroide(Sprite):
     # Establezco tamaños predeterminados de asteroides como atributos de clase
@@ -71,16 +75,16 @@ class Asteroide(Sprite):
         self.aster_random = random.randrange(0, 3)
         if self.aster_random == 0:
             self.image = pg.transform.scale(self.image, self.SIZE_SMALL_ASTER)
-            self.aster_small_puntos = 10
+            self.aster_small_puntos = 5
             self.radius = 10
         elif self.aster_random == 1:
             self.image = pg.transform.scale(self.image, self.SIZE_MEDIUM_ASTER)
-            self.aster_medium_puntos = 20
+            self.aster_medium_puntos = 10
             self.radius = 10
         elif self.aster_random == 2:
             self.image = pg.transform.scale(self.image, self.SIZE_BIG_ASTER)
             self.radius = 10
-            self.aster_big_puntos = 30       
+            self.aster_big_puntos = 15       
         
         '''
         Con esta parte se generan aleatoriamente 
@@ -125,10 +129,33 @@ class Planeta(Sprite):
         self.pantalla_rect = tq_game.pantalla.get_rect()
         self.planeta_imagen = pg.image.load(os.path.join("resources", "images", "planeta.png"))
         self.planeta_rect = self.planeta_imagen.get_rect(midleft=(ANCHO + 5, ALTO/2))
-        self.velocidad_x = 5
+        self.velocidad_x = 1
     def blit_planeta(self):
      self.pantalla.blit(self.planeta_imagen, self.planeta_rect)
 
+class NaveVictoriosa(Sprite):
 
+    MARGEN_LATERAL = 20    
+    TAMAÑO_NAVE = (80, 80)   
 
-            
+    def __init__(self, tq_game):
+        super().__init__()
+        self.pantalla = tq_game.pantalla
+        self.pantalla_rect = tq_game.pantalla.get_rect()
+        self.velocidad_x = 1
+        self.velocidad_rotacion = 1
+        # Cargar imagen de nave
+        self.nave_imagen = pg.image.load(os.path.join("resources", "images", "Main_Ship.png"))
+
+        # Rotacion de la imagen
+        self.nave_imagen = pg.transform.rotate(self.nave_imagen, -90)
+
+        # Escalar imagen de la nave
+        self.nave_imagen = pg.transform.scale(self.nave_imagen, self.TAMAÑO_NAVE)
+
+        # Posicion inicial de la nave
+        self.rect = self.nave_imagen.get_rect(midleft=(self.MARGEN_LATERAL, ALTO/2))
+    
+    def blitNaveWin(self):
+        # Pintar imagen de la nave
+        self.pantalla.blit(self.nave_imagen, self.rect)

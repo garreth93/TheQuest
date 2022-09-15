@@ -10,7 +10,7 @@ import pygame as pg
 
 from . import ANCHO, ALTO, COLOR_TEXTO, FPS
 from .configuracion import Config
-from .entidades import Nave, Asteroide, Planeta
+from .entidades import Nave, Asteroide, Planeta, NaveVictoriosa
 from .estadisticas_juego import GameStats
 from .puntuaciones import Puntuaciones
 
@@ -31,8 +31,7 @@ class Portada(Escena):
     '''Clase para el menú principal, 
     hereda directamente de la clase Escena'''
     def __init__(self, pantalla: pg.Surface):
-        super().__init__(pantalla)
-
+        super().__init__(pantalla)        
         # Carga de recursos, titulo, fondo, fuentes...
         self.fondo_portada = pg.image.load(os.path.join("resources", "images", "fondo.png"))
         fuente_titulo = os.path.join("resources", "fonts", "Arcadia.ttf")
@@ -152,7 +151,7 @@ class Partida(Escena):
         # Instancia para guardar las estadisticas del juego y crear un marcador
         self.estadisticas = GameStats(self)
         self.puntuacion = Puntuaciones(self)
-
+        
         # Banderilla para victoria
         self.victoria = False
 
@@ -168,17 +167,19 @@ class Partida(Escena):
         self.fuente_nivel2 = pg.font.Font(fuente, 50)
 
         # Instanciamos la clase Nave
-        self.jugador = Nave(self)       
-
+        self.jugador = Nave(self) 
+        # Instancio Imagen de misma nave, pero para animacion de victoria      
+        self.nave_ganadora = NaveVictoriosa(self)
         # Instancia de grupos de asteroides, generamos 10
         self.asteroides = pg.sprite.Group()
 
-        for i in range(10):
+        for i in range(5):
             self.asteroide = Asteroide(self)
             self.asteroides.add(self.asteroide)
         
         # Instancia de la clase planeta
         self.planeta = Planeta(self)
+
         
     def bucle_principal(self):
         '''Este es el bucle principal'''
@@ -189,68 +190,86 @@ class Partida(Escena):
         pg.mixer.music.load(os.path.join("resources", "sounds", "musica_ingame.ogg"))
         pg.mixer.music.play(-1)
 
+        # Medidor de tiempo
+        tiempo_juego = pg.time.get_ticks()
+
         self.salir = False
-        while not self.salir: 
-            # Control de FPS
-            self.reloj.tick(FPS) / 1000                       
+        while not self.salir:                                       
 
             # Revisor de eventos
             self.revisa_eventos()
+            self.control_juego_ganado()
 
             if self.estadisticas.juego_activo:
+                # Control de FPS
+                self.reloj.tick(FPS)                  
+                # Contador de ticks
+                self.tiempo_actual = (pg.time.get_ticks() - tiempo_juego)//1000
 
                 # Refrescar posicion del jugador
                 self.jugador.actualizaNave()
-                # Colisiones con asteroides
-                self.colision()
-                
+
+
                 # Movimiento del fondo
                 x_relativa = self.x % self.fondo.get_rect().width
                 self.pantalla.blit(self.fondo, (x_relativa - self.fondo.get_rect().width,self.y))
                 if x_relativa < ANCHO:
                     self.pantalla.blit(self.fondo, (x_relativa, 0))
                 self.x -= 1           
+                if self.victoria == False:
+                    # Colisiones con asteroides
+                    self.colision()
+                    # Genera asteroides y los pinta y cuenta puntos
+                    self.asteroides.update()
+                    # Pintar jugador
+                    self.jugador.blitNave()
                 
-                # Genera asteroides y los pinta
-                self.asteroides.update()
                 self.asteroides.draw(self.pantalla)
 
                 # Pinta la puntuacion
-                self.puntuacion.mostrar_puntuacion()
-
-                #Contador de puntos
-                #self.contador_puntos()        
+                self.puntuacion.mostrar_puntuacion()                      
                                 
                 # Comprueba y ejecuta nivel 2
                 self.nivel2()
 
                 # Comprueba y ejecuta la victoria
-                #self.ganar_partida()
+                self.ganar_partida()                
 
-                # Pintar jugador
-                self.jugador.blitNave()
-                #Texto Vidas
-                self.contador_vidas()    
+                # Texto Vidas
+                self.contador_vidas()   
+
                 # Metodo para comprobar el game over
-                self.game_over()       
+                self.game_over()
+
                 # Actualizacion de la ventana
                 pg.display.update()   
 
     def revisa_eventos(self):
         '''Aqui se revisara si hay eventos en el bucle principal'''
-        for event in pg.event.get():
-            # Opciones para salir del juego
-            if event.type == pg.QUIT:
-                    sys.exit()            
-            elif event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
-                    sys.exit()
+        if self.victoria == False:
+            for event in pg.event.get():
+                # Opciones para salir del juego
+                if event.type == pg.QUIT:
+                        sys.exit()            
+                elif event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
+                        sys.exit()
 
-            # Controles de la nave
-            elif event.type == pg.KEYDOWN:
-                self.revisa_keydown(event)
-            elif event.type == pg.KEYUP:
-                self.revisa_keyup(event)
-    
+                # Controles de la nave
+                elif event.type == pg.KEYDOWN:
+                    self.revisa_keydown(event)
+                elif event.type == pg.KEYUP:
+                    self.revisa_keyup(event)
+
+    def control_juego_ganado(self):
+        '''Estas teclas solo se habilitaran cuando el juego se haya ganado'''
+        if self.victoria == True:
+            for event in pg.event.get():
+                # Opciones para salir del juego
+                if event.type == pg.QUIT:
+                        sys.exit()            
+                elif event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
+                        sys.exit()
+
     def revisa_keydown(self, event):
         '''Responde a las PULSACIONES de las teclas'''
         if event.key == pg.K_UP:
@@ -263,15 +282,18 @@ class Partida(Escena):
         if event.key == pg.K_UP:
             self.jugador.mueve_arriba = False
         elif event.key == pg.K_DOWN:
-            self.jugador.mueve_abajo = False
-    
-    def colision(self): #FIXME Añadir imagen de colision
+            self.jugador.mueve_abajo = False    
+            
+    def colision(self): #FIXME Añadir tiempo de colision
         '''Este metodo detecta las colisones que 
-        se producen en la nave con los asteroides y resta vidas'''
-
+        se producen en la nave con los asteroides y resta vidas'''       
         self.colision_nave = pg.sprite.spritecollide(self.jugador, self.asteroides, False, pg.sprite.collide_circle)
         if self.colision_nave:
-            #self.jugador.nave_imagen = pg.image.load(os.path.join("resources", "images", "explosion.png"))
+            self.momento_colision = pg.time.get_ticks()//1000
+            self.jugador.nave_imagen = pg.image.load(os.path.join("resources", "images", "explosion.png"))
+            print(f'Tiempo actual: {self.tiempo_actual} Momento de colision: {self.momento_colision}')
+            if self.tiempo_actual - self.momento_colision < 2000:
+                self.nave_imagen = pg.image.load(os.path.join("resources", "images", "Main_Ship.png"))
             # Sonido de la colision
             impacto = pg.mixer.Sound(os.path.join("resources", "sounds" ,"impact.ogg"))
             pg.mixer.Sound.set_volume(impacto, 1)
@@ -288,10 +310,10 @@ class Partida(Escena):
                 self.asteroide = Asteroide(self)               
                 self.asteroides.add(self.asteroide)
             # Una pausa para volver retomar el juego
-            sleep(1)
-            #self.jugador.nave_imagen = pg.image.load(os.path.join("resources", "images", "Main_Ship.png"))
-
-        
+            #sleep(1)
+    def refresca_colison(self):        
+        if self.tiempo_actual - self.momento_colision < 2000:
+            self.nave_imagen = pg.image.load(os.path.join("resources", "images", "Main_Ship.png"))
     
     def contador_vidas(self):
         '''Metodo para cargar y mostrar el contador de vidas'''
@@ -331,7 +353,7 @@ class Partida(Escena):
                (render_msg2, (msg2_x, ALTO - 500))])
     
     def nivel2(self): #FIXME Reparar texto emergente del nivel 2
-        if self.estadisticas.puntuacion > 1000:            
+        if self.estadisticas.puntuacion > 50:                       
             msg_leve2 = "NIVEL 2"
             self.render_msg = pg.font.Font.render(self.fuente_nivel2, msg_leve2, True, COLOR_TEXTO)                        
             self.rect_textlevel = self.render_msg.get_rect()
@@ -342,12 +364,21 @@ class Partida(Escena):
             self.pantalla.blit(self.render_msg, self.rect_textlevel)
             self.asteroide.velocidad_x = random.randrange(10, 15)
     
-    """ def ganar_partida(self): #TODO Crear la condicion de victoria, hacer aparecer el planeta
-        if self.estadisticas.puntuacion > 300:
+    def ganar_partida(self): #TODO Crear la condicion de victoria, hacer aparecer el planeta
+        if self.estadisticas.puntuacion > 100:
             self.victoria = True
             self.planeta.blit_planeta()            
-            self.planeta.rect.x -= self.planeta.velocidad_x """
+            self.planeta.planeta_rect.x -= self.planeta.velocidad_x
+            if self.planeta.planeta_rect.left < ANCHO - 300:
+                self.planeta.velocidad_x = 0
+
+            self.nave_ganadora.blitNaveWin()
+            self.nave_ganadora.rect.x += self.nave_ganadora.velocidad_x
+            if self.nave_ganadora.rect.right == ANCHO - 300:
+                self.nave_ganadora.velocidad_x = 0
             
+           
+   
            
 
 
