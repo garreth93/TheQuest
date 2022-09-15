@@ -2,7 +2,7 @@ import os
 import random
 
 import pygame as pg
-from . import ALTO, ANCHO, NEGRO
+from . import ALTO, ANCHO, NEGRO, COLOR_TEXTO
 from pygame.sprite import Sprite
 from .configuracion import Config
 
@@ -143,7 +143,7 @@ class NaveVictoriosa(Sprite):
         self.pantalla = tq_game.pantalla
         self.pantalla_rect = tq_game.pantalla.get_rect()
         self.velocidad_x = 1
-        self.velocidad_rotacion = 1
+        self.angulo = 0        
         # Cargar imagen de nave
         self.nave_imagen = pg.image.load(os.path.join("resources", "images", "Main_Ship.png"))
 
@@ -159,3 +159,22 @@ class NaveVictoriosa(Sprite):
     def blitNaveWin(self):
         # Pintar imagen de la nave
         self.pantalla.blit(self.nave_imagen, self.rect)
+
+class TextoNivel2():
+    def __init__(self, tq_game):
+        super().__init__()
+        self.pantalla = tq_game.pantalla
+        self.pantalla_rect = tq_game.pantalla.get_rect()
+        self.velocidad_y = 1
+        self.velocidad_x = 2
+        fuente = os.path.join("resources", "fonts", "Arcadia.ttf")
+        self.fuente_nivel2 = pg.font.Font(fuente, 50)
+        msg_leve2 = "NIVEL 2"
+        self.render_msg = pg.font.Font.render(self.fuente_nivel2, msg_leve2, True, COLOR_TEXTO)
+        self.text_ancho = self.render_msg.get_width()
+        self.text_alto = self.render_msg.get_height()       
+        self.rect_textlevel = self.render_msg.get_rect(center=((ANCHO)/2, 0 - self.text_alto))
+              
+
+    def blitNivel2Text(self):
+        self.pantalla.blit(self.render_msg, self.rect_textlevel)

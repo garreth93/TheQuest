@@ -10,7 +10,7 @@ import pygame as pg
 
 from . import ANCHO, ALTO, COLOR_TEXTO, FPS
 from .configuracion import Config
-from .entidades import Nave, Asteroide, Planeta, NaveVictoriosa
+from .entidades import Nave, Asteroide, Planeta, NaveVictoriosa, TextoNivel2
 from .estadisticas_juego import GameStats
 from .puntuaciones import Puntuaciones
 
@@ -151,7 +151,7 @@ class Partida(Escena):
         # Instancia para guardar las estadisticas del juego y crear un marcador
         self.estadisticas = GameStats(self)
         self.puntuacion = Puntuaciones(self)
-        
+        self.texto_level2 = TextoNivel2(self)
         # Banderilla para victoria
         self.victoria = False
 
@@ -164,7 +164,7 @@ class Partida(Escena):
         fuente = os.path.join("resources", "fonts", "Arcadia.ttf")
         self.fuente_vidas = pg.font.Font(fuente, 20)
         self.fuente_game_over = pg.font.Font(fuente, 50)
-        self.fuente_nivel2 = pg.font.Font(fuente, 50)
+        
 
         # Instanciamos la clase Nave
         self.jugador = Nave(self) 
@@ -352,20 +352,22 @@ class Partida(Escena):
             [(render_msg1, (msg1_x, ALTO - 600)),
                (render_msg2, (msg2_x, ALTO - 500))])
     
-    def nivel2(self): #FIXME Reparar texto emergente del nivel 2
-        if self.estadisticas.puntuacion > 50:                       
-            msg_leve2 = "NIVEL 2"
-            self.render_msg = pg.font.Font.render(self.fuente_nivel2, msg_leve2, True, COLOR_TEXTO)                        
-            self.rect_textlevel = self.render_msg.get_rect()
-            self.rect_textlevel.y = ALTO - 600
-            self.rect_textlevel.x = (ANCHO - self.rect_textlevel.width)/2
-            self.rect_textlevel.y += 10
-
-            self.pantalla.blit(self.render_msg, self.rect_textlevel)
+    def nivel2(self):
+        '''Crea un texto emergente que avisa de nivel 2 alcanzado, y
+        aumenta la velocidad con la que son generados los asteroides'''
+        if self.estadisticas.puntuacion > 100:                       
             self.asteroide.velocidad_x = random.randrange(10, 15)
+            self.texto_level2.blitNivel2Text()
+            self.texto_level2.rect_textlevel.y += self.texto_level2.velocidad_y
+            if self.texto_level2.rect_textlevel.top > ALTO - 550:
+                self.texto_level2.velocidad_y = 0
+                if self.texto_level2.velocidad_y == 0:
+                    self.texto_level2.rect_textlevel.x -= self.texto_level2.velocidad_x
+                
+            
     
     def ganar_partida(self): #TODO Crear la condicion de victoria, hacer aparecer el planeta
-        if self.estadisticas.puntuacion > 100:
+        if self.estadisticas.puntuacion > 1000:
             self.victoria = True
             self.planeta.blit_planeta()            
             self.planeta.planeta_rect.x -= self.planeta.velocidad_x
@@ -376,7 +378,9 @@ class Partida(Escena):
             self.nave_ganadora.rect.x += self.nave_ganadora.velocidad_x
             if self.nave_ganadora.rect.right == ANCHO - 300:
                 self.nave_ganadora.velocidad_x = 0
-            
+                if self.nave_ganadora.velocidad_x == 0:
+                    self.nave_ganadora.angulo += 1                    
+                    self.nave_ganadora.nave_imagen = (pg.transform.rotate(self.nave_ganadora.nave_imagen, self.nave_ganadora.angulo))
            
    
            
