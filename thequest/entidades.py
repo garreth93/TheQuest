@@ -57,8 +57,10 @@ class Asteroide(Sprite):
     SIZE_MEDIUM_ASTER = (75, 75)
     SIZE_BIG_ASTER = (100, 100)    
     
-    def __init__(self):
+    def __init__(self, tq_game):
         super().__init__()
+        self.stats = tq_game.estadisticas
+        self.puntuaciones = tq_game.puntuacion
         # Cargar imagen de asteroide
         self.image = pg.image.load(os.path.join("resources", "images", "asteroide.png"))
         
@@ -69,16 +71,16 @@ class Asteroide(Sprite):
         self.aster_random = random.randrange(0, 3)
         if self.aster_random == 0:
             self.image = pg.transform.scale(self.image, self.SIZE_SMALL_ASTER)
-            self.aster_small_puntos = 20
+            self.aster_small_puntos = 10
             self.radius = 10
         elif self.aster_random == 1:
             self.image = pg.transform.scale(self.image, self.SIZE_MEDIUM_ASTER)
-            self.aster_medium_puntos = 50
+            self.aster_medium_puntos = 20
             self.radius = 10
         elif self.aster_random == 2:
             self.image = pg.transform.scale(self.image, self.SIZE_BIG_ASTER)
             self.radius = 10
-            self.aster_big_puntos = 80        
+            self.aster_big_puntos = 30       
         
         '''
         Con esta parte se generan aleatoriamente 
@@ -93,6 +95,20 @@ class Asteroide(Sprite):
         self.velocidad_x = random.randrange(5, 10)        
 
     def update(self):
+        '''Esta parte sirve para ir contado los puntos que nos dan
+        los diferentes tamaños de los asteroides'''
+        if self.aster_random == 0: 
+            if self.rect.right < 0:
+                self.stats.puntuacion += self.aster_small_puntos
+        elif self.aster_random == 1: 
+            if self.rect.right < 0:
+                self.stats.puntuacion += self.aster_medium_puntos
+        elif self.aster_random == 2:
+            if self.rect.right < 0: 
+                self.stats.puntuacion += self.aster_big_puntos
+        
+        self.puntuaciones.iniciar_puntuacion()
+
         '''Este metodo refresca los asteroides que salen 
         por un lado de la pantalla para generar otros, dando 
         la sensacion de continuidad'''

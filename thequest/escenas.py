@@ -174,7 +174,7 @@ class Partida(Escena):
         self.asteroides = pg.sprite.Group()
 
         for i in range(10):
-            self.asteroide = Asteroide()
+            self.asteroide = Asteroide(self)
             self.asteroides.add(self.asteroide)
         
         # Instancia de la clase planeta
@@ -219,13 +219,13 @@ class Partida(Escena):
                 self.puntuacion.mostrar_puntuacion()
 
                 #Contador de puntos
-                self.contador_puntos()        
+                #self.contador_puntos()        
                                 
                 # Comprueba y ejecuta nivel 2
                 self.nivel2()
 
                 # Comprueba y ejecuta la victoria
-                self.ganar_partida()
+                #self.ganar_partida()
 
                 # Pintar jugador
                 self.jugador.blitNave()
@@ -285,7 +285,7 @@ class Partida(Escena):
             self.asteroides.empty()
             # Crea de nuevo los meteoritos
             for i in range(10):
-                self.asteroide = Asteroide()               
+                self.asteroide = Asteroide(self)               
                 self.asteroides.add(self.asteroide)
             # Una pausa para volver retomar el juego
             sleep(1)
@@ -308,27 +308,7 @@ class Partida(Escena):
         num_x = 100
         num_y = 20
         num_rect.center = (num_x, num_y)
-        self.pantalla.blit(render_num, num_rect)
-    
-    def contador_puntos(self): #FIXME Intentar reparar los puntos que dan los asteroides
-        '''Este metodo sirve para ir contado los puntos que nos dan
-        los diferentes tamaños de los asteroides'''    
-        
-        if self.asteroide.aster_random == 0: 
-            if self.asteroide.rect.right < 0:
-                self.estadisticas.puntuacion += self.asteroide.aster_small_puntos
-        elif self.asteroide.aster_random == 1: 
-            if self.asteroide.rect.right < 0:
-                self.estadisticas.puntuacion += self.asteroide.aster_medium_puntos
-        elif self.asteroide.aster_random == 2:
-            if self.asteroide.rect.right < 0: 
-                self.estadisticas.puntuacion += self.asteroide.aster_big_puntos
-
-        # Esta parte añade que se nos resten puntos si la nave choca
-        if self.colision_nave:
-            self.estadisticas.puntuacion -= self.config.aster_colision
-               
-        self.puntuacion.iniciar_puntuacion()
+        self.pantalla.blit(render_num, num_rect)   
 
     def game_over(self):
         '''En este metodo habilitamos la comprobacion del game over
@@ -351,7 +331,7 @@ class Partida(Escena):
                (render_msg2, (msg2_x, ALTO - 500))])
     
     def nivel2(self): #FIXME Reparar texto emergente del nivel 2
-        if self.estadisticas.puntuacion > 200:            
+        if self.estadisticas.puntuacion > 1000:            
             msg_leve2 = "NIVEL 2"
             self.render_msg = pg.font.Font.render(self.fuente_nivel2, msg_leve2, True, COLOR_TEXTO)                        
             self.rect_textlevel = self.render_msg.get_rect()
@@ -362,11 +342,11 @@ class Partida(Escena):
             self.pantalla.blit(self.render_msg, self.rect_textlevel)
             self.asteroide.velocidad_x = random.randrange(10, 15)
     
-    def ganar_partida(self): #TODO Crear la condicion de victoria, hacer aparecer el planeta
+    """ def ganar_partida(self): #TODO Crear la condicion de victoria, hacer aparecer el planeta
         if self.estadisticas.puntuacion > 300:
             self.victoria = True
             self.planeta.blit_planeta()            
-            self.planeta.rect.x -= self.planeta.velocidad_x
+            self.planeta.rect.x -= self.planeta.velocidad_x """
             
            
 
