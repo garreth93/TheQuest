@@ -415,6 +415,7 @@ class Partida(Escena):
             pos_x2 = (ANCHO - texto_ancho2)/2
             pos_y2 = ALTO - 550
             self.pantalla.blit(texto_render2, (pos_x2, pos_y2))
+    
    
 class HallOfFame(Escena):
     def __init__(self, pantalla: pg.Surface):
@@ -438,6 +439,7 @@ class HallOfFame(Escena):
 
     def bucle_principal(self):
         '''Este es el bucle principal'''
+        salir = False        
         
         '''Este metodo carga los datos de la BBDD para añadirlos en listas 
         para su posterior renderizado'''
@@ -445,15 +447,14 @@ class HallOfFame(Escena):
 
         # Con esta parte renderizamos cada uno de los textos de la base de datos y añadimos a otra lista.
         for nombre in self.nombres_puntuacion:
-            textos_renderizados = self.fuente3_puntuacion.render(str(nombre), True, COLOR_TEXTO)
-            self.listNombres_render.append(textos_renderizados)
+            self.texto_renderizado = self.fuente3_puntuacion.render(str(nombre), True, COLOR_TEXTO)
+            self.listNombres_render.append(self.texto_renderizado)
 
         for punto in self.puntos_puntuacion:
-            puntos_renderizados = self.fuente3_puntuacion.render(str(punto), True, COLOR_TEXTO)
-            self.listPuntos_render.append(puntos_renderizados)
+            self.punto_renderizado = self.fuente3_puntuacion.render(str(punto), True, COLOR_TEXTO)
+            self.listPuntos_render.append(self.punto_renderizado)
 
         
-        salir = False
         while not salir:
             # Definimos las teclas para navegar por el juego y salir del mismo
             for event in pg.event.get():
@@ -466,10 +467,17 @@ class HallOfFame(Escena):
                 if event.type == pg.QUIT:
                     sys.exit()
 
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_BACKSPACE:
+                        self.texto_usuario = self.texto_usuario[:-1]
+                    else:
+                        self.texto_usuario += event.unicode
+
             # Pintar el fondo de la portada, con titulo y opciones
             self.pantalla.blit(self.fondo_portada, (0,0))
             self.textoSuperior()
-            self.blitRecords(self.listNombres_render, self.listPuntos_render, textos_renderizados, puntos_renderizados)
+            self.inputBox()
+            #self.blitRecords(self.listNombres_render, self.listPuntos_render, self.texto_renderizado, self.punto_renderizado)
             self.textoInferior()
                                 
             pg.display.flip()
@@ -524,3 +532,12 @@ class HallOfFame(Escena):
             pos_x2 = ANCHO/2 + render2.get_width() - separacionX
             pos_y2 = i2 * render1.get_height() + saltoDeLinea
             self.pantalla.blit(puntos[i2], (pos_x2, pos_y2))
+
+    def inputBox(self):
+        self.texto_usuario = ""
+        text_render = pg.font.Font.render(self.fuente3_puntuacion, self.texto_usuario, True, COLOR_TEXTO)
+        self.pantalla.blit(text_render,(0, 0))
+
+        input_rect = pg.Rect(200, 200, 140, 32)
+        color = pg.Color('lightskyblue3')
+        pg.draw.rect(self.pantalla, color, input_rect)
