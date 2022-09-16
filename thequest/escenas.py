@@ -220,15 +220,19 @@ class Partida(Escena):
                 if self.victoria == False:
                     # Colisiones con asteroides
                     self.colision()
-                    # Genera asteroides y los pinta y cuenta puntos
+                    # Genera asteroides y cuenta puntos
                     self.asteroides.update()
                     # Pintar jugador
                     self.jugador.blitNave()
 
+                # Esta parte permite a la nave volver a su estado normal en medio segundo
                 print(f'Tiempo actual: {self.tiempo_actual} Momento de colision: {self.momento_colision}')
-                if self.tiempo_actual - self.momento_colision > 1:
-                    self.jugador.nave_imagen = self.nave_imagen = pg.image.load(os.path.join("resources", "images", "Main_Ship.png"))
-                    
+                if self.tiempo_actual - self.momento_colision > 0.5:
+                    self.jugador.nave_imagen = pg.image.load(os.path.join("resources", "images", "Main_Ship.png"))
+                    self.jugador.nave_imagen = pg.transform.rotate(self.jugador.nave_imagen, -90)
+                    self.jugador.nave_imagen = pg.transform.scale(self.jugador.nave_imagen, self.jugador.TAMAÑO_NAVE)
+
+                # Pinta los asteroides del grupo
                 self.asteroides.draw(self.pantalla)
 
                 # Pinta la puntuacion
@@ -289,10 +293,11 @@ class Partida(Escena):
         elif event.key == pg.K_DOWN:
             self.jugador.mueve_abajo = False    
             
-    def colision(self): #FIXME Añadir tiempo de colision
+    def colision(self):
         '''Este metodo detecta las colisones que 
         se producen en la nave con los asteroides y resta vidas'''       
         self.colision_nave = pg.sprite.spritecollide(self.jugador, self.asteroides, False, pg.sprite.collide_circle)
+        # Captura de los ticks en la colision y cambio del estado de la nave a explosion
         if self.colision_nave:
             self.momento_colision = pg.time.get_ticks()//1000
             self.jugador.nave_imagen = pg.image.load(os.path.join("resources", "images", "explosion.png"))
@@ -309,7 +314,7 @@ class Partida(Escena):
             # Se deshace de los meteoritos en pantalla
             self.asteroides.empty()
             # Crea de nuevo los meteoritos
-            for i in range(15):
+            for i in range(10):
                 self.asteroide = Asteroide(self)               
                 self.asteroides.add(self.asteroide)
             # Una pausa para volver retomar el juego
@@ -356,7 +361,7 @@ class Partida(Escena):
     def nivel2(self):
         '''Crea un texto emergente que avisa de nivel 2 alcanzado, y
         aumenta la velocidad con la que son generados los asteroides'''
-        if self.estadisticas.puntuacion > 500:                       
+        if self.estadisticas.puntuacion > 1000:                       
             self.asteroide.velocidad_x = random.randrange(10, 15)
             self.texto_level2.blitNivel2Text()
             self.texto_level2.rect_textlevel.y += self.texto_level2.velocidad_y
@@ -368,7 +373,7 @@ class Partida(Escena):
             
     
     def ganar_partida(self): #FIXME Terminar la animacion de victoria
-        if self.estadisticas.puntuacion > 1000:
+        if self.estadisticas.puntuacion > 3000:
             self.victoria = True
             self.planeta.blit_planeta()            
             self.planeta.planeta_rect.x -= self.planeta.velocidad_x
