@@ -2,7 +2,7 @@
 import os
 import pygame as pg
 
-from thequest.escenas import Historia, Portada, Instrucciones, Partida
+from thequest.escenas import Historia, Portada, Instrucciones, Partida, HallOfFame
 from thequest import ALTO, ANCHO
 
 
@@ -26,7 +26,8 @@ class Thequest:
             Portada(self.display),
             Instrucciones(self.display),
             Historia(self.display),
-            Partida(self.display)
+            Partida(self.display),
+            HallOfFame(self.display)
         ]
     
     # Metodo para ejecucion del juego en archivo main

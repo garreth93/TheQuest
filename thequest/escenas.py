@@ -162,8 +162,8 @@ class Partida(Escena):
     
         # Fuente para las vidas, marcador y game over
         fuente = os.path.join("resources", "fonts", "Arcadia.ttf")
-        self.fuente_vidas = pg.font.Font(fuente, 20)
-        self.fuente_game_over = pg.font.Font(fuente, 50)
+        self.fuente_vidas_final = pg.font.Font(fuente, 20)
+        self.fuente_game_over_win = pg.font.Font(fuente, 50)
         
 
         # Instanciamos la clase Nave
@@ -180,8 +180,10 @@ class Partida(Escena):
         # Instancia de la clase planeta
         self.planeta = Planeta(self)
 
+        # Creo variables para hacer contadores necesarios
         self.momento_colision = 0
-        
+        self.momento_victoria = 0
+
     def bucle_principal(self):
         '''Este es el bucle principal'''
         # Frena la música del menú
@@ -226,11 +228,7 @@ class Partida(Escena):
                     self.jugador.blitNave()
 
                 # Esta parte permite a la nave volver a su estado normal en medio segundo
-                print(f'Tiempo actual: {self.tiempo_actual} Momento de colision: {self.momento_colision}')
-                if self.tiempo_actual - self.momento_colision > 0.5:
-                    self.jugador.nave_imagen = pg.image.load(os.path.join("resources", "images", "Main_Ship.png"))
-                    self.jugador.nave_imagen = pg.transform.rotate(self.jugador.nave_imagen, -90)
-                    self.jugador.nave_imagen = pg.transform.scale(self.jugador.nave_imagen, self.jugador.TAMAÑO_NAVE)
+                self.refresca_colision()                
 
                 # Pinta los asteroides del grupo
                 self.asteroides.draw(self.pantalla)
@@ -242,7 +240,10 @@ class Partida(Escena):
                 self.nivel2()
 
                 # Comprueba y ejecuta la victoria
-                self.ganar_partida()                
+                self.ganar_partida()  
+
+                # Emerge un texto despues de unos segundos de haber ganado
+                self.textoVictoria()        
 
                 # Texto Vidas
                 self.contador_vidas()   
@@ -276,8 +277,10 @@ class Partida(Escena):
                 # Opciones para salir del juego
                 if event.type == pg.QUIT:
                         sys.exit()            
-                elif event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
-                        sys.exit()
+                if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
+                        sys.exit()                
+                if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
+                    self.salir = True
 
     def revisa_keydown(self, event):
         '''Responde a las PULSACIONES de las teclas'''
@@ -320,10 +323,16 @@ class Partida(Escena):
             # Una pausa para volver retomar el juego
             #sleep(1)
     
-    
+    def refresca_colision(self):
+        '''Cuenta medio segundo y vuelve la imagen de la nave'''
+        if self.tiempo_actual - self.momento_colision > 0.5:
+            self.jugador.nave_imagen = pg.image.load(os.path.join("resources", "images", "Main_Ship.png"))
+            self.jugador.nave_imagen = pg.transform.rotate(self.jugador.nave_imagen, -90)
+            self.jugador.nave_imagen = pg.transform.scale(self.jugador.nave_imagen, self.jugador.TAMAÑO_NAVE)
+
     def contador_vidas(self):
         '''Metodo para cargar y mostrar el contador de vidas'''
-        render_fuente = self.fuente_vidas.render("VIDAS:", True, COLOR_TEXTO)
+        render_fuente = self.fuente_vidas_final.render("VIDAS:", True, COLOR_TEXTO)
         rectangulo = render_fuente.get_rect()
         x = 50
         y = 20
@@ -331,7 +340,7 @@ class Partida(Escena):
         self.pantalla.blit(render_fuente, rectangulo)
 
         # Esta parte hace funcional el numero de vidas
-        render_num = self.fuente_vidas.render(str(self.estadisticas.vidas_restantes), True, COLOR_TEXTO)
+        render_num = self.fuente_vidas_final.render(str(self.estadisticas.vidas_restantes), True, COLOR_TEXTO)
         num_rect = render_num.get_rect()
         num_x = 100
         num_y = 20
@@ -345,8 +354,8 @@ class Partida(Escena):
         mensaje1 = "HAS PERDIDO"
         mensaje2 = "Pulsa (ESC) para salir del juego"
         if self.estadisticas.juego_activo == False:
-            render_msg1 = pg.font.Font.render(self.fuente_game_over, mensaje1, True, COLOR_TEXTO)
-            render_msg2 = pg.font.Font.render(self.fuente_game_over, mensaje2, True, COLOR_TEXTO)
+            render_msg1 = pg.font.Font.render(self.fuente_game_over_win, mensaje1, True, COLOR_TEXTO)
+            render_msg2 = pg.font.Font.render(self.fuente_game_over_win, mensaje2, True, COLOR_TEXTO)
             
             msg1_width = render_msg1.get_width()
             msg2_width = render_msg2.get_width()
@@ -373,8 +382,8 @@ class Partida(Escena):
             
     
     def ganar_partida(self): #FIXME Terminar la animacion de victoria
-        if self.estadisticas.puntuacion > 3000:
-            self.victoria = True
+        if self.estadisticas.puntuacion > 200:                                 
+            self.victoria = True            
             self.planeta.blit_planeta()            
             self.planeta.planeta_rect.x -= self.planeta.velocidad_x
             if self.planeta.planeta_rect.left < ANCHO - 300:
@@ -385,12 +394,66 @@ class Partida(Escena):
             if self.nave_ganadora.rect.right == ANCHO - 300:
                 self.nave_ganadora.velocidad_x = 0
                 if self.nave_ganadora.velocidad_x == 0:
-                    for grados in range(0, 180): # Esto peta el juego
+                    """ for grados in range(0, 180): # Esto peta el juego
                         self.nave_ganadora.angulo += grados                    
                         self.nave_ganadora.nave_imagen = (pg.transform.rotate(self.nave_ganadora.nave_imagen, self.nave_ganadora.angulo))
-                        print(grados)
+                        print(grados) """
+
+
+    def textoVictoria(self):
+        print(f'Tiempo actual: {self.tiempo_actual} Momento Victoria: {self.momento_victoria}')
+        if self.nave_ganadora.rect.right == ANCHO - 300:
+            mensaje = "HAS GANADO LA PARTIDA"
+            texto_render = pg.font.Font.render(self.fuente_game_over_win, mensaje, True, COLOR_TEXTO)
+            texto_ancho = texto_render.get_width()                    
+            pos_x = (ANCHO - texto_ancho)/2
+            pos_y = ALTO - 650
+            self.pantalla.blit(texto_render, (pos_x, pos_y))
+
+            mensaje2 = "Pulsa (Space) para continuar"
+            texto_render2 = pg.font.Font.render(self.fuente_vidas_final, mensaje2, True, COLOR_TEXTO)
+            texto_ancho2 = texto_render2.get_width()                    
+            pos_x2 = (ANCHO - texto_ancho2)/2
+            pos_y2 = ALTO - 550
+            self.pantalla.blit(texto_render2, (pos_x2, pos_y2))
    
-           
+class HallOfFame(Escena):
+    def __init__(self, pantalla: pg.Surface):
+        super().__init__(pantalla)
+        self.fondo_portada = pg.image.load(os.path.join("resources", "images", "fondo.png"))
+        self.fuente_direccion = os.path.join("resources", "fonts", "Arcadia.ttf")
+        self.fuente_puntuacion = pg.font.Font(self.fuente_direccion, 50)
 
+    def bucle_principal(self):
+        '''Este es el bucle principal'''
+    
+        salir = False
+        while not salir:
+            # Definimos las teclas para navegar por el juego y salir del mismo
+            for event in pg.event.get():
+                if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
+                    salir = True            
 
+                if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
+                    sys.exit()
 
+                if event.type == pg.QUIT:
+                    sys.exit()
+
+            # Pintar el fondo de la portada, con titulo y opciones
+            self.pantalla.blit(self.fondo_portada, (0,0))
+            self.textoSuperior()
+                                
+            pg.display.flip()
+    
+    def textoSuperior(self):
+        '''Pinta el texto superior de la pantalla Score'''
+        mensaje = "PUNTUACION GLOBAL"
+        texto_render = pg.font.Font.render(self.fuente_puntuacion, mensaje, True, COLOR_TEXTO)
+        texto_ancho = texto_render.get_width()
+        pos_x = (ANCHO - texto_ancho)/2
+        pos_y = ALTO - 650
+        self.pantalla.blit(texto_render, (pos_x, pos_y))
+
+    def textoInferior(self):
+        pass
