@@ -181,8 +181,7 @@ class Partida(Escena):
         self.planeta = Planeta(self)
 
         # Creo variables para hacer contadores necesarios
-        self.momento_colision = 0
-        self.momento_victoria = 0
+        self.momento_colision = 0        
 
     def bucle_principal(self):
         '''Este es el bucle principal'''
@@ -400,8 +399,7 @@ class Partida(Escena):
                         print(grados) """
 
 
-    def textoVictoria(self):
-        print(f'Tiempo actual: {self.tiempo_actual} Momento Victoria: {self.momento_victoria}')
+    def textoVictoria(self):        
         if self.nave_ganadora.rect.right == ANCHO - 300:
             mensaje = "HAS GANADO LA PARTIDA"
             texto_render = pg.font.Font.render(self.fuente_game_over_win, mensaje, True, COLOR_TEXTO)
@@ -420,9 +418,13 @@ class Partida(Escena):
 class HallOfFame(Escena):
     def __init__(self, pantalla: pg.Surface):
         super().__init__(pantalla)
+        '''Clase para mostrar la pantalla Score'''
+        # Carga de fuentes e imagenes para la pantalla Score
         self.fondo_portada = pg.image.load(os.path.join("resources", "images", "fondo.png"))
         self.fuente_direccion = os.path.join("resources", "fonts", "Arcadia.ttf")
         self.fuente_puntuacion = pg.font.Font(self.fuente_direccion, 50)
+        self.fuente2_direccion = os.path.join("resources", "fonts", "BigSpace.ttf")
+        self.fuente2_puntuacion = pg.font.Font(self.fuente2_direccion, 30)
 
     def bucle_principal(self):
         '''Este es el bucle principal'''
@@ -443,6 +445,7 @@ class HallOfFame(Escena):
             # Pintar el fondo de la portada, con titulo y opciones
             self.pantalla.blit(self.fondo_portada, (0,0))
             self.textoSuperior()
+            self.textoInferior()
                                 
             pg.display.flip()
     
@@ -456,4 +459,17 @@ class HallOfFame(Escena):
         self.pantalla.blit(texto_render, (pos_x, pos_y))
 
     def textoInferior(self):
-        pass
+        '''Pinta el texto de nombre y puntuacion'''
+        palabra1 = "Nombre"
+        palabra1_render = pg.font.Font.render(self.fuente2_puntuacion, palabra1, True, COLOR_TEXTO)
+        palabra1_ancho = palabra1_render.get_width()
+        pos_x1 = (ANCHO - palabra1_ancho - 700)
+        pos_y1 = ALTO - 500
+        self.pantalla.blit(palabra1_render, (pos_x1, pos_y1))
+
+        palabra2 = "Puntuancion"
+        palabra2_render = pg.font.Font.render(self.fuente2_puntuacion, palabra2, True, COLOR_TEXTO)
+        palabra2_ancho = palabra2_render.get_width()
+        pos_x2 = (ANCHO - palabra2_ancho - 200)
+        pos_y2 = ALTO - 500
+        self.pantalla.blit(palabra2_render, (pos_x2, pos_y2))
