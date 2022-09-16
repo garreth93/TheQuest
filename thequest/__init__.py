@@ -11,3 +11,5 @@ NEGRO = (0, 0, 0)
 # FPS del juego
 FPS = 60
 
+# Ruta de la base de datos
+RUTA_DB = "data/records.db"

@@ -8,11 +8,12 @@ from random import randrange
 
 import pygame as pg
 
-from . import ANCHO, ALTO, COLOR_TEXTO, FPS
+from . import ANCHO, ALTO, COLOR_TEXTO, FPS, RUTA_DB
 from .configuracion import Config
 from .entidades import Nave, Asteroide, Planeta, NaveVictoriosa, TextoNivel2
 from .estadisticas_juego import GameStats
 from .puntuaciones import Puntuaciones
+from .records import AdministraDB
 
 # Creacion de la clase padre de todas
 class Escena:
@@ -419,16 +420,39 @@ class HallOfFame(Escena):
     def __init__(self, pantalla: pg.Surface):
         super().__init__(pantalla)
         '''Clase para mostrar la pantalla Score'''
+        # Instancia de la clase AdministraDB
+        self.BaseDatos = AdministraDB(RUTA_DB)
+        self.records = []
+        self.nombres_puntuacion = []
+        self.puntos_puntuacion = []
+        self.listNombres_render = []
+        self.listPuntos_render = []
         # Carga de fuentes e imagenes para la pantalla Score
         self.fondo_portada = pg.image.load(os.path.join("resources", "images", "fondo.png"))
         self.fuente_direccion = os.path.join("resources", "fonts", "Arcadia.ttf")
         self.fuente_puntuacion = pg.font.Font(self.fuente_direccion, 50)
         self.fuente2_direccion = os.path.join("resources", "fonts", "BigSpace.ttf")
         self.fuente2_puntuacion = pg.font.Font(self.fuente2_direccion, 30)
+        self.fuente3_puntuacion = pg.font.Font(self.fuente2_direccion, 20)
+
 
     def bucle_principal(self):
         '''Este es el bucle principal'''
-    
+        
+        '''Este metodo carga los datos de la BBDD para añadirlos en listas 
+        para su posterior renderizado'''
+        self.carga_records()
+
+        # Con esta parte renderizamos cada uno de los textos de la base de datos y añadimos a otra lista.
+        for nombre in self.nombres_puntuacion:
+            textos_renderizados = self.fuente3_puntuacion.render(str(nombre), True, COLOR_TEXTO)
+            self.listNombres_render.append(textos_renderizados)
+
+        for punto in self.puntos_puntuacion:
+            puntos_renderizados = self.fuente3_puntuacion.render(str(punto), True, COLOR_TEXTO)
+            self.listPuntos_render.append(puntos_renderizados)
+
+        
         salir = False
         while not salir:
             # Definimos las teclas para navegar por el juego y salir del mismo
@@ -445,6 +469,7 @@ class HallOfFame(Escena):
             # Pintar el fondo de la portada, con titulo y opciones
             self.pantalla.blit(self.fondo_portada, (0,0))
             self.textoSuperior()
+            self.blitRecords(self.listNombres_render, self.listPuntos_render, textos_renderizados, puntos_renderizados)
             self.textoInferior()
                                 
             pg.display.flip()
@@ -473,3 +498,29 @@ class HallOfFame(Escena):
         pos_x2 = (ANCHO - palabra2_ancho - 200)
         pos_y2 = ALTO - 500
         self.pantalla.blit(palabra2_render, (pos_x2, pos_y2))
+
+    def carga_records(self):
+        self.records = self.BaseDatos.leeRecords()
+        for record in self.records:
+            record.pop('id')
+            for i in record.values():
+                if isinstance(i, str):
+                    self.nombres_puntuacion.append(i)
+                else:
+                    self.puntos_puntuacion.append(i)
+
+    def blitRecords(self, puntos, nomb, render1, render2):
+        '''Con este metodo se pintan los datos en pantalla de la BBDD'''
+
+        saltoDeLinea = 100
+        separacionX = 100
+
+        for i in range(len(nomb)):
+            pos_x = ANCHO/2 + render1.get_width() - 50
+            pos_y = i * render1.get_height() + saltoDeLinea
+            self.pantalla.blit(nomb[i], (pos_x, pos_y))
+
+        for i2 in range(len(puntos)):
+            pos_x2 = ANCHO/2 + render2.get_width() - separacionX
+            pos_y2 = i2 * render1.get_height() + saltoDeLinea
+            self.pantalla.blit(puntos[i2], (pos_x2, pos_y2))

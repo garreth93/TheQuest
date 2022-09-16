@@ -1,7 +1,7 @@
 import sqlite3
 
 
-class AministraDB:
+class AdministraDB:
     def __init__(self, ruta):
         self.ruta = ruta
 
