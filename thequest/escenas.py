@@ -9,7 +9,7 @@ from random import randrange
 import pygame as pg
 
 from . import ANCHO, ALTO, COLOR_TEXTO, FPS, RUTA_DB
-from .configuracion import Config
+from .configuracion import Config, InputBox
 from .entidades import Nave, Asteroide, Planeta, NaveVictoriosa, TextoNivel2
 from .estadisticas_juego import GameStats
 from .puntuaciones import Puntuaciones
@@ -149,10 +149,11 @@ class Partida(Escena):
     def __init__(self, pantalla: pg.Surface):
         super().__init__(pantalla)
         self.config = Config()
-        # Instancia para guardar las estadisticas del juego y crear un marcador
+        # Instancias necesarias
         self.estadisticas = GameStats(self)
         self.puntuacion = Puntuaciones(self)
         self.texto_level2 = TextoNivel2(self)
+        self.baseDatos = AdministraDB(RUTA_DB)
         # Banderilla para victoria
         self.victoria = False
 
@@ -207,18 +208,14 @@ class Partida(Escena):
                 # Control de FPS
                 self.reloj.tick(FPS)                  
                 # Contador de ticks
-                self.tiempo_actual = (pg.time.get_ticks() - tiempo_juego)//1000
+                self.tiempo_actual = (pg.time.get_ticks() - tiempo_juego)
 
                 # Refrescar posicion del jugador
                 self.jugador.actualizaNave()
 
-
                 # Movimiento del fondo
-                x_relativa = self.x % self.fondo.get_rect().width
-                self.pantalla.blit(self.fondo, (x_relativa - self.fondo.get_rect().width,self.y))
-                if x_relativa < ANCHO:
-                    self.pantalla.blit(self.fondo, (x_relativa, 0))
-                self.x -= 1           
+                self.movimientoFondo()                
+                         
                 if self.victoria == False:
                     # Colisiones con asteroides
                     self.colision()
@@ -226,6 +223,7 @@ class Partida(Escena):
                     self.asteroides.update()
                     # Pintar jugador
                     self.jugador.blitNave()
+
 
                 # Esta parte permite a la nave volver a su estado normal en medio segundo
                 self.refresca_colision()                
@@ -294,7 +292,14 @@ class Partida(Escena):
         if event.key == pg.K_UP:
             self.jugador.mueve_arriba = False
         elif event.key == pg.K_DOWN:
-            self.jugador.mueve_abajo = False    
+            self.jugador.mueve_abajo = False
+
+    def movimientoFondo(self):
+        x_relativa = self.x % self.fondo.get_rect().width
+        self.pantalla.blit(self.fondo, (x_relativa - self.fondo.get_rect().width,self.y))
+        if x_relativa < ANCHO:
+            self.pantalla.blit(self.fondo, (x_relativa, 0))
+        self.x -= 1
             
     def colision(self):
         '''Este metodo detecta las colisones que 
@@ -302,7 +307,7 @@ class Partida(Escena):
         self.colision_nave = pg.sprite.spritecollide(self.jugador, self.asteroides, False, pg.sprite.collide_circle)
         # Captura de los ticks en la colision y cambio del estado de la nave a explosion
         if self.colision_nave:
-            self.momento_colision = pg.time.get_ticks()//1000
+            self.momento_colision = pg.time.get_ticks()
             self.jugador.nave_imagen = pg.image.load(os.path.join("resources", "images", "explosion.png"))
            
             # Sonido de la colision
@@ -320,12 +325,12 @@ class Partida(Escena):
             for i in range(10):
                 self.asteroide = Asteroide(self)               
                 self.asteroides.add(self.asteroide)
-            # Una pausa para volver retomar el juego
-            #sleep(1)
+            
     
     def refresca_colision(self):
-        '''Cuenta medio segundo y vuelve la imagen de la nave'''
-        if self.tiempo_actual - self.momento_colision > 0.5:
+        '''Cuenta medio segundo y vuelve la imagen de la 
+        nave'''
+        if self.tiempo_actual - self.momento_colision > 50:
             self.jugador.nave_imagen = pg.image.load(os.path.join("resources", "images", "Main_Ship.png"))
             self.jugador.nave_imagen = pg.transform.rotate(self.jugador.nave_imagen, -90)
             self.jugador.nave_imagen = pg.transform.scale(self.jugador.nave_imagen, self.jugador.TAMAÑO_NAVE)
@@ -370,7 +375,7 @@ class Partida(Escena):
     def nivel2(self):
         '''Crea un texto emergente que avisa de nivel 2 alcanzado, y
         aumenta la velocidad con la que son generados los asteroides'''
-        if self.estadisticas.puntuacion > 1000:                       
+        if self.estadisticas.puntuacion > 50:                       
             self.asteroide.velocidad_x = random.randrange(10, 15)
             self.texto_level2.blitNivel2Text()
             self.texto_level2.rect_textlevel.y += self.texto_level2.velocidad_y
@@ -382,7 +387,7 @@ class Partida(Escena):
             
     
     def ganar_partida(self): #FIXME Terminar la animacion de victoria
-        if self.estadisticas.puntuacion > 200:                                 
+        if self.estadisticas.puntuacion > 500:                                 
             self.victoria = True            
             self.planeta.blit_planeta()            
             self.planeta.planeta_rect.x -= self.planeta.velocidad_x
@@ -415,14 +420,33 @@ class Partida(Escena):
             pos_x2 = (ANCHO - texto_ancho2)/2
             pos_y2 = ALTO - 550
             self.pantalla.blit(texto_render2, (pos_x2, pos_y2))
+
+            self.introducirPuntuacion()
+
+    def introducirPuntuacion(self):
+        '''Este metodo se encarga de, en caso de no haber puntuacion echa por nadie,
+        poder introducir una primera. Una vez haya una puntuacion, esto irá añadiendo 
+        mas records cada vez mejores.'''
+        try:
+            puntuacion_record = self.baseDatos.puntuacionMayor()
+            if puntuacion_record < self.estadisticas.puntuacion:
+                input_text = InputBox(self.pantalla)
+                nombre = input_text.get_text()
+                self.baseDatos.almacenaRecord(nombre, self.estadisticas.puntuacion)
+        except:
+            input_text = InputBox(self.pantalla)
+            nombre = input_text.get_text()
+            self.baseDatos.almacenaRecord(nombre, self.estadisticas.puntuacion)
     
-   
-class HallOfFame(Escena):
+class HallOfFame(Escena): #FIXME Terminar la aparicion de datos de la BBDD
     def __init__(self, pantalla: pg.Surface):
         super().__init__(pantalla)
         '''Clase para mostrar la pantalla Score'''
-        # Instancia de la clase AdministraDB
-        self.BaseDatos = AdministraDB(RUTA_DB)
+        # Instancias necesarias
+        self.config = Config()
+        self.baseDatos = AdministraDB(RUTA_DB)
+        self.estadisticas = GameStats(self)
+        self.puntuacion = Puntuaciones(self)
         self.records = []
         self.nombres_puntuacion = []
         self.puntos_puntuacion = []
@@ -434,7 +458,7 @@ class HallOfFame(Escena):
         self.fuente_puntuacion = pg.font.Font(self.fuente_direccion, 50)
         self.fuente2_direccion = os.path.join("resources", "fonts", "BigSpace.ttf")
         self.fuente2_puntuacion = pg.font.Font(self.fuente2_direccion, 30)
-        self.fuente3_puntuacion = pg.font.Font(self.fuente2_direccion, 20)
+        self.fuente3_puntuacion = pg.font.Font(self.fuente2_direccion, 30)
 
 
     def bucle_principal(self):
@@ -467,17 +491,12 @@ class HallOfFame(Escena):
                 if event.type == pg.QUIT:
                     sys.exit()
 
-                if event.type == pg.KEYDOWN:
-                    if event.key == pg.K_BACKSPACE:
-                        self.texto_usuario = self.texto_usuario[:-1]
-                    else:
-                        self.texto_usuario += event.unicode
-
             # Pintar el fondo de la portada, con titulo y opciones
+            
             self.pantalla.blit(self.fondo_portada, (0,0))
             self.textoSuperior()
-            self.inputBox()
-            #self.blitRecords(self.listNombres_render, self.listPuntos_render, self.texto_renderizado, self.punto_renderizado)
+            
+            self.blitRecords(self.listNombres_render, self.listPuntos_render, self.texto_renderizado, self.punto_renderizado)
             self.textoInferior()
                                 
             pg.display.flip()
@@ -508,7 +527,7 @@ class HallOfFame(Escena):
         self.pantalla.blit(palabra2_render, (pos_x2, pos_y2))
 
     def carga_records(self):
-        self.records = self.BaseDatos.leeRecords()
+        self.records = self.baseDatos.leeRecords()
         for record in self.records:
             record.pop('id')
             for i in record.values():
@@ -520,18 +539,18 @@ class HallOfFame(Escena):
     def blitRecords(self, puntos, nomb, render1, render2):
         '''Con este metodo se pintan los datos en pantalla de la BBDD'''
 
-        saltoDeLinea = 100
-        separacionX = 100
+        saltoDeLinea = 0
+        separacionX = 270
 
-        for i in range(len(nomb)):
-            pos_x = ANCHO/2 + render1.get_width() - 50
-            pos_y = i * render1.get_height() + saltoDeLinea
-            self.pantalla.blit(nomb[i], (pos_x, pos_y))
+        for i in range(len(puntos)):
+            pos_x = ANCHO/3 + render1.get_width() - 170
+            pos_y = i * render1.get_height() + saltoDeLinea + 250
+            self.pantalla.blit(puntos[i], (pos_x, pos_y))
 
-        for i2 in range(len(puntos)):
-            pos_x2 = ANCHO/2 + render2.get_width() - separacionX
-            pos_y2 = i2 * render1.get_height() + saltoDeLinea
-            self.pantalla.blit(puntos[i2], (pos_x2, pos_y2))
+        for i2 in range(len(nomb)):
+            pos_x2 = ANCHO/3 + render2.get_width() + separacionX + 50
+            pos_y2 = i2 * render1.get_height() + saltoDeLinea + 250
+            self.pantalla.blit(nomb[i2], (pos_x2, pos_y2))
 
     def inputBox(self):
         self.texto_usuario = ""
@@ -541,3 +560,5 @@ class HallOfFame(Escena):
         input_rect = pg.Rect(200, 200, 140, 32)
         color = pg.Color('lightskyblue3')
         pg.draw.rect(self.pantalla, color, input_rect)
+
+    

@@ -45,7 +45,7 @@ class AdministraDB:
         en la base de datos'''
 
         # Consulta a realizar para introducir el nuevo record
-        consulta = "INSERT INTO records (nombre,puntos) VALUES (?,?)"
+        consulta = "INSERT INTO records (Nombre,Puntos) VALUES (?,?)"
         
         # Conexion con la base de datos
         conexion = sqlite3.connect(self.ruta)
@@ -62,3 +62,14 @@ class AdministraDB:
         # Cerrar conexion
         conexion.close()
 
+    def puntuacionMayor(self):
+        '''Este metodo usa el diccionario generado por leeRecords para recoger unicamente
+        el valor de Puntos y luego lo ordena de mayor a menor para obtener el jugador
+        que mas puntos hizo'''  
+        records = self.leeRecords()
+        puntuaciones  = [x["Puntos"] for x in records]           
+        puntuaciones.sort(reverse=True)
+        
+        return puntuaciones[0]
+    
+        
