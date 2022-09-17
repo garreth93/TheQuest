@@ -31,7 +31,7 @@ class InputBox:
         self.color_texto = color_texto
         self.pantalla = pantalla
         self.padding = 30
-        self.crear_elementos_fijos()
+        self.crear_elementos_fijos()        
 
     def get_text(self):
         salir = False
@@ -44,7 +44,7 @@ class InputBox:
                         self.texto = self.texto[:-1]
                     elif event.key == pg.K_RETURN:
                         salir = True
-                    else:
+                    else:                        
                         self.texto += event.unicode
             self.pintar()
             pg.display.flip()
