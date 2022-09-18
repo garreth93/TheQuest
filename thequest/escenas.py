@@ -184,6 +184,7 @@ class Partida(Escena):
 
         # Creo variables para hacer contadores necesarios
         self.momento_colision = 0        
+        self.recta_final = 0        
 
     def bucle_principal(self):
         '''Este es el bucle principal'''
@@ -236,9 +237,10 @@ class Partida(Escena):
                                 
                 # Comprueba y ejecuta nivel 2
                 self.nivel2()
+                self.nivel2flag()
 
-                # Comprueba y ejecuta la victoria
-                self.ganar_partida()  
+                # Cuenta asteroides al llegar al nivel 2 y luego ejecuta victoria
+                self.cuenta_asteroides()
 
                 # Emerge un texto despues de unos segundos de haber ganado
                 self.textoVictoria()        
@@ -375,7 +377,7 @@ class Partida(Escena):
     def nivel2(self):
         '''Crea un texto emergente que avisa de nivel 2 alcanzado, y
         aumenta la velocidad con la que son generados los asteroides'''
-        if self.estadisticas.puntuacion > 500:                       
+        if self.estadisticas.puntuacion > 800:                       
             self.asteroide.velocidad_x = random.randrange(10, 15)
             self.texto_level2.blitNivel2Text()
             self.texto_level2.rect_textlevel.y += self.texto_level2.velocidad_y
@@ -383,11 +385,19 @@ class Partida(Escena):
                 self.texto_level2.velocidad_y = 0
                 if self.texto_level2.velocidad_y == 0:
                     self.texto_level2.rect_textlevel.x -= self.texto_level2.velocidad_x
-                
-            
+    
+    def nivel2flag(self):        
+        if self.estadisticas.puntuacion > 800:                                   
+            self.puntuacion.recta_final_flag = True
+    
+    def cuenta_asteroides(self):
+        '''Este metodo cuenta asteroides una vez comenzado el nivel 2,
+         y finaliza el juego.'''
+        if self.puntuacion.contador_aster > 50:
+            self.ganar_partida()
     
     def ganar_partida(self): #FIXME Terminar la animacion de victoria
-        if self.estadisticas.puntuacion > 630:                                 
+        #if self.estadisticas.puntuacion > 630:                                 
             self.victoria = True            
             self.planeta.blit_planeta()            
             self.planeta.planeta_rect.x -= self.planeta.velocidad_x

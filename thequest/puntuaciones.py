@@ -15,6 +15,11 @@ class Puntuaciones:
         # Configuramos la fuente
         self.fuente = pygame.font.SysFont(None, 48)
 
+        # Contador de asteroides
+        self.contador_aster = 0
+        # Flag para activar ultimos asteroides
+        self.recta_final_flag = False
+
         # Renderizamos la imagen de la puntuacion
         self.iniciar_puntuacion()
 

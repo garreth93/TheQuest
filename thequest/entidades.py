@@ -4,7 +4,6 @@ import random
 import pygame as pg
 from . import ALTO, ANCHO, NEGRO, COLOR_TEXTO
 from pygame.sprite import Sprite
-from .configuracion import Config
 
 
 class Nave(Sprite):
@@ -84,7 +83,9 @@ class Asteroide(Sprite):
         elif self.aster_random == 2:
             self.image = pg.transform.scale(self.image, self.SIZE_BIG_ASTER)
             self.radius = 10
-            self.aster_big_puntos = 15       
+            self.aster_big_puntos = 15
+
+                       
         
         '''
         Con esta parte se generan aleatoriamente 
@@ -115,12 +116,15 @@ class Asteroide(Sprite):
 
         '''Este metodo refresca los asteroides que salen 
         por un lado de la pantalla para generar otros, dando 
-        la sensacion de continuidad'''
+        la sensacion de continuidad'''                
         self.rect.x -= self.velocidad_x
         if self.rect.right < -10:
             self.rect.y = random.randrange(0, self.margen_asteroide)
             self.rect.x = ANCHO + self.rect.width
             self.velocidad_x = random.randrange(5, 10)
+            if self.puntuaciones.recta_final_flag == True:
+               self.puntuaciones.contador_aster += 1
+               print(self.puntuaciones.contador_aster)
 
 class Planeta(Sprite):
     def __init__(self, tq_game):

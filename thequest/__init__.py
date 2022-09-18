@@ -13,3 +13,5 @@ FPS = 60
 
 # Ruta de la base de datos
 RUTA_DB = "data/records.db"
+
+ 

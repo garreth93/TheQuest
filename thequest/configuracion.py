@@ -19,6 +19,8 @@ class Config:
 
         self.aster_colision = 100
 
+       
+
 
 class InputBox:
 
