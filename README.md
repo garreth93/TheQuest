@@ -4,6 +4,7 @@ Proyecto Final Keepcoding: Trata sobre una nave que debe buscar el camino a un n
 Programas necesarios para ejecutar el juego:
 Git - https://git-scm.com/downloads
 Visual Code Studio - https://code.visualstudio.com/download
+Python - https://www.python.org/downloads/
 
 Despues de instalar los programas necesarios sigue las instrucciones de instalacion.
 
