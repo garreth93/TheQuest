@@ -124,7 +124,7 @@ class Asteroide(Sprite):
             self.velocidad_x = random.randrange(5, 10)
             if self.puntuaciones.recta_final_flag == True:
                self.puntuaciones.contador_aster += 1
-               print(self.puntuaciones.contador_aster)
+               
 
 class Planeta(Sprite):
     def __init__(self, tq_game):

@@ -23,7 +23,7 @@ class Config:
 
 
 class InputBox:
-
+    '''Clase para gestionar un cuadro emergente que pide texto'''
     def __init__(self, pantalla: pg.Surface, color_texto="white", color_fondo="Blue", title=""):
         font_file = os.path.join(
             "resources", "fonts", "Arcadia.ttf")
@@ -32,7 +32,7 @@ class InputBox:
         self.color_fondo = color_fondo
         self.color_texto = color_texto
         self.pantalla = pantalla
-        self.padding = 30
+        self.margen = 30
         self.crear_elementos_fijos()
         self.maxima_longidtud = 3        
 
@@ -72,8 +72,8 @@ class InputBox:
         self.y_titulo = (ALTO-self.titulo.get_height())//2
 
         # el rectángulo de fondo
-        x_fondo = self.x_titulo - self.padding
-        y_fondo = self.y_titulo - self.padding
-        w_fondo = self.titulo.get_width() + self.padding * 2
-        h_fondo = self.titulo.get_height() * 2 + self.padding * 2
+        x_fondo = self.x_titulo - self.margen
+        y_fondo = self.y_titulo - self.margen
+        w_fondo = self.titulo.get_width() + self.margen * 2
+        h_fondo = self.titulo.get_height() * 2 + self.margen * 2
         self.fondo = pg.Rect(x_fondo, y_fondo, w_fondo, h_fondo)

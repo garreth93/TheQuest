@@ -297,6 +297,7 @@ class Partida(Escena):
             self.jugador.mueve_abajo = False
 
     def movimientoFondo(self):
+        '''Generacion del fondo en movimiento'''
         x_relativa = self.x % self.fondo.get_rect().width
         self.pantalla.blit(self.fondo, (x_relativa - self.fondo.get_rect().width,self.y))
         if x_relativa < ANCHO:
@@ -409,13 +410,14 @@ class Partida(Escena):
             if self.nave_ganadora.rect.right == ANCHO - 300:
                 self.nave_ganadora.velocidad_x = 0
                 if self.nave_ganadora.velocidad_x == 0:
-                    """ for grados in range(0, 180): # Esto peta el juego
+                    """ for grados in range(0, 180): #FIXME Esto peta el juego
                         self.nave_ganadora.angulo += grados                    
-                        self.nave_ganadora.nave_imagen = (pg.transform.rotate(self.nave_ganadora.nave_imagen, self.nave_ganadora.angulo))
-                        print(grados) """
+                        self.nave_ganadora.nave_imagen = (pg.transform.rotate(self.nave_ganadora.nave_imagen, self.nave_ganadora.angulo)) """
+                        
 
 
-    def textoVictoria(self):        
+    def textoVictoria(self):
+        '''Este metodo muestra el haber superado el juego'''    
         if self.nave_ganadora.rect.right == ANCHO - 300:
             mensaje = "HAS GANADO LA PARTIDA"
             texto_render = pg.font.Font.render(self.fuente_game_over_win, mensaje, True, COLOR_TEXTO)
@@ -563,6 +565,8 @@ class HallOfFame(Escena): #FIXME Terminar la aparicion de datos de la BBDD
             self.pantalla.blit(nomb[i2], (pos_x2, pos_y2))
 
     def inputBox(self):
+        '''Este metodo sirve para que en caso de haber superado un record,
+        aparezca un cuadro emergente en que escribir tus iniciales. Maximo 3 letras.'''
         self.texto_usuario = ""
         text_render = pg.font.Font.render(self.fuente3_puntuacion, self.texto_usuario, True, COLOR_TEXTO)
         self.pantalla.blit(text_render,(0, 0))
