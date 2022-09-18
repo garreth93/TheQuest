@@ -31,7 +31,8 @@ class InputBox:
         self.color_texto = color_texto
         self.pantalla = pantalla
         self.padding = 30
-        self.crear_elementos_fijos()        
+        self.crear_elementos_fijos()
+        self.maxima_longidtud = 3        
 
     def get_text(self):
         salir = False
@@ -44,8 +45,9 @@ class InputBox:
                         self.texto = self.texto[:-1]
                     elif event.key == pg.K_RETURN:
                         salir = True
-                    else:                        
-                        self.texto += event.unicode
+                    else: 
+                        if len(self.texto) < self.maxima_longidtud:                   
+                            self.texto += event.unicode
             self.pintar()
             pg.display.flip()
         return self.texto
@@ -63,7 +65,7 @@ class InputBox:
     def crear_elementos_fijos(self):
         # el título
         self.titulo = self.tipografia.render(
-            "Escribe tu nombre:", True, self.color_texto, self.color_fondo)
+            "¡¡Nuevo Record!! Escribe tu nombre y pulsa intro:", True, self.color_texto, self.color_fondo)
         self.x_titulo = (ANCHO-self.titulo.get_width())//2
         self.y_titulo = (ALTO-self.titulo.get_height())//2
 
