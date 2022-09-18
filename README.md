@@ -63,3 +63,5 @@ Ahora tan solo necesitar iniciar el archivo main.py con el siguiente comando ```
 ![7ç](https://user-images.githubusercontent.com/74630180/190916219-d968e48c-c1e2-4b04-8faf-32ed71f09bec.png)
 
 
+TroubleShooting:
+Para windows se deberan descargar una version de python actualizada y que sea de la página oficial, ya que el de la Microsoft Store da problemas con los archivos de audio. 
