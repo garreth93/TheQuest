@@ -25,14 +25,17 @@ Despues de instalar los programas necesarios sigue las instrucciones de instalac
    Ahora puedes abrir visual studio code, y desde ahi abrir la carpeta creada anteriormente con clone.
 
 2 - Puesta a punto del juego:
-
-   Ahora una vez abierto con VSC la carpeta del juego, deberas pulsar  CTRL + ñ para acceder a su  terminal, luego en su terminal deberás escribir el comando ```python -m venv env``` para crear un entorno virtual en el que
-   a continuación instalar pygame.
+   
+   Ahora una vez abierto con VSC la carpeta del juego, deberas pulsar  CTRL + ñ para acceder a su  terminal, luego en su terminal deberá ir al lateral derecho y          escoger el "Command prompt" para operar.
+   
+   ![o](https://user-images.githubusercontent.com/74630180/190917742-0849f45c-528f-4b2b-bc5a-90523c730cb3.png)   
+   
+   Luego escribir el comando ```python -m venv env``` para crear un entorno virtual en el que a continuación instalar pygame.
    
    ![3](https://user-images.githubusercontent.com/74630180/190656957-fe6ef1fd-5fba-4e0d-acd2-fbe7c1601f12.png)
 
    Hecho el entorno ahora tendrás que escribir en la terminal diferentes comandos dependiendo de tu sistema operativo para poder activar el entorno:
-![5](https://user-images.githubusercontent.com/74630180/190657319-e670af92-9cbe-4cec-a5d6-511db8632cf5.png)
+   ![5](https://user-images.githubusercontent.com/74630180/190657319-e670af92-9cbe-4cec-a5d6-511db8632cf5.png)
 
    Para windows -> ```.\env\Scripts\activate```
    Para Linux y Mac -> ```source /env/bin/activate```
@@ -49,7 +52,7 @@ Despues de instalar los programas necesarios sigue las instrucciones de instalac
 
 3 - Base de datos:
 
-   Para que el juego pueda mantener una pantalla en la que se guarde la puntuacion de los jugadores, hay que hacer antes un paso importante. Deberas eliminar "records.db" en la carpeta data, y renombrar el records-copy.db con el nombre "records.db".
+   Para que el juego pueda mantener una pantalla en la que se guarde la puntuacion de los jugadores, hay que hacer antes un paso importante. Deberas eliminar           "records.db" en la carpeta data, y renombrar el records-copy.db con el nombre "records.db".
    
    ![6](https://user-images.githubusercontent.com/74630180/190657405-ab4dd527-e3a1-4d04-a541-7c55657528d6.png)
 
@@ -58,4 +61,5 @@ Con esto el juego ya deberia funcionar perfectamente.
 Ahora tan solo necesitar iniciar el archivo main.py con el siguiente comando ```python main.py```
 
 ![7ç](https://user-images.githubusercontent.com/74630180/190916219-d968e48c-c1e2-4b04-8faf-32ed71f09bec.png)
+
 
