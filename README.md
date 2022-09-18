@@ -25,7 +25,7 @@ Despues de instalar los programas necesarios sigue las instrucciones de instalac
 
 2 - Puesta a punto del juego:
 
-   Ahora una vez abierto con VSC la carpeta del juego, en su terminal deberás escribir el comando ```python -m venv env``` para crear un entorno virtual en el que
+   Ahora una vez abierto con VSC la carpeta del juego, deberas pulsar  CTRL + ñ para acceder a su  terminal, luego en su terminal deberás escribir el comando ```python -m venv env``` para crear un entorno virtual en el que
    a continuación instalar pygame.
    
    ![3](https://user-images.githubusercontent.com/74630180/190656957-fe6ef1fd-5fba-4e0d-acd2-fbe7c1601f12.png)
