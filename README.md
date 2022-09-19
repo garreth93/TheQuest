@@ -58,7 +58,7 @@ Despues de instalar los programas necesarios sigue las instrucciones de instalac
 
 Con esto el juego ya deberia funcionar perfectamente.
 
-Ahora tan solo necesitar iniciar el archivo main.py con el siguiente comando ```python main.py```
+Ahora tan solo necesitas iniciar el archivo main.py con el siguiente comando ```python main.py```
 
 ![7ç](https://user-images.githubusercontent.com/74630180/190916219-d968e48c-c1e2-4b04-8faf-32ed71f09bec.png)
 
