@@ -395,17 +395,17 @@ class Partida(Escena):
                     self.texto_level2.rect_textlevel.x -= self.texto_level2.velocidad_x
     
     def nivel2flag(self):        
-        if self.estadisticas.puntuacion > 100:                                   
+        if self.estadisticas.puntuacion > 800:                                   
             self.puntuacion.recta_final_flag = True
     
     def cuenta_asteroides(self):
         '''Este metodo cuenta asteroides una vez comenzado el nivel 2,
          y finaliza el juego.'''
-        if self.puntuacion.contador_aster > 10:
+        if self.puntuacion.contador_aster > 50:
             self.ganar_partida()
     
-    def ganar_partida(self): #FIXME Terminar la animacion de victoria
-        #if self.estadisticas.puntuacion > 630:                                 
+    def ganar_partida(self):
+        # Este metodo ejecuta la victoria empezando las animaciones.                                                  
             self.victoria = True            
             self.planeta.blit_planeta()            
             self.planeta.planeta_rect.x -= self.planeta.velocidad_x
