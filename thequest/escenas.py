@@ -245,7 +245,6 @@ class Partida(Escena):
                 self.cuenta_asteroides()
 
                 # Emerge un texto despues de unos segundos de haber ganado
-                self.textoVictoria()        
 
                 # Texto Vidas
                 self.contador_vidas()   
@@ -257,6 +256,7 @@ class Partida(Escena):
                 self.animacion()
                 self.animacion2()
                 self.animacion3()
+                self.textoVictoria()        
             
                 # Actualizacion de la ventana
                 pg.display.update()   
@@ -475,7 +475,7 @@ class Partida(Escena):
             nombre = input_text.get_text()
             self.baseDatos.almacenaRecord(nombre, self.estadisticas.puntuacion)
     
-class HallOfFame(Escena): #FIXME Terminar la aparicion de datos de la BBDD
+class HallOfFame(Escena): 
     def __init__(self, pantalla: pg.Surface):
         super().__init__(pantalla)
         '''Clase para mostrar la pantalla Score'''
@@ -518,10 +518,7 @@ class HallOfFame(Escena): #FIXME Terminar la aparicion de datos de la BBDD
         
         while not salir:
             # Definimos las teclas para navegar por el juego y salir del mismo
-            for event in pg.event.get():
-                if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
-                    salir = True            
-
+            for event in pg.event.get():                
                 if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
                     sys.exit()
 
@@ -535,6 +532,7 @@ class HallOfFame(Escena): #FIXME Terminar la aparicion de datos de la BBDD
             
             self.blitRecords(self.listNombres_render, self.listPuntos_render, self.texto_renderizado, self.punto_renderizado)
             self.textoInferior()
+            self.mensajeSalir()
                                 
             pg.display.flip()
     
@@ -600,4 +598,10 @@ class HallOfFame(Escena): #FIXME Terminar la aparicion de datos de la BBDD
         color = pg.Color('lightskyblue3')
         pg.draw.rect(self.pantalla, color, input_rect)
 
-    
+    def mensajeSalir(self):
+        mensaje = "Pulsa (ESC) para salir"
+        text_render = pg.font.Font.render(self.fuente2_puntuacion, mensaje, True, COLOR_TEXTO)
+        text_width = text_render.get_width()
+        pos_x = (ANCHO - text_width)/2
+        pos_y = (ALTO - 100)
+        self.pantalla.blit(text_render, (pos_x, pos_y))

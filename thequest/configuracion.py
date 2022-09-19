@@ -67,8 +67,8 @@ class InputBox:
     def crear_elementos_fijos(self):
         # el título
         self.titulo = self.tipografia.render(
-            "¡¡Nuevo Record!! Escribe tu nombre y pulsa intro:", True, self.color_texto, self.color_fondo)
-        self.x_titulo = (ANCHO-self.titulo.get_width())//2
+            "Nuevo Record! Pon tu nombre y pulsa intro:", True, self.color_texto, self.color_fondo)
+        self.x_titulo = (ANCHO-self.titulo.get_width())//2 - 200
         self.y_titulo = (ALTO-self.titulo.get_height())//2
 
         # el rectángulo de fondo
