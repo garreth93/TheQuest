@@ -64,4 +64,6 @@ Ahora tan solo necesitas iniciar el archivo main.py con el siguiente comando ```
 
 
 TroubleShooting:
-Para windows se deberan descargar una version de python actualizada y que sea de la página oficial, ya que el de la Microsoft Store da problemas con los archivos de audio. 
+Para windows se deberan descargar una version de python actualizada y que sea de la página oficial, ya que el de la Microsoft Store da problemas con los archivos de audio. Y asegurarse de que no hubiesen versiones antiguas de python ya instaladas en su ordenador.
+
+Otra cosa que podria ayudar si ocurre algún problema es usar ```python.exe -m pip install --upgrade pip``` para actualizar pip a su ultima version, y despues instalar pygame con ```pip install pygame```.
