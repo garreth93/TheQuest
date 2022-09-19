@@ -58,10 +58,12 @@ Despues de instalar los programas necesarios sigue las instrucciones de instalac
 
 Con esto el juego ya deberia funcionar perfectamente.
 
-Ahora tan solo necesitar iniciar el archivo main.py con el siguiente comando ```python main.py```
+Ahora tan solo necesitas iniciar el archivo main.py con el siguiente comando ```python main.py```
 
 ![7ç](https://user-images.githubusercontent.com/74630180/190916219-d968e48c-c1e2-4b04-8faf-32ed71f09bec.png)
 
 
 TroubleShooting:
-Para windows se deberan descargar una version de python actualizada y que sea de la página oficial, ya que el de la Microsoft Store da problemas con los archivos de audio. 
+Para windows se deberan descargar una version de python actualizada y que sea de la página oficial, ya que el de la Microsoft Store da problemas con los archivos de audio. Y asegurarse de que no hubiesen versiones antiguas de python ya instaladas en su ordenador.
+
+Otra cosa que podria ayudar si ocurre algún problema es usar ```python.exe -m pip install --upgrade pip``` para actualizar pip a su ultima version, y despues instalar pygame con ```pip install pygame```.
