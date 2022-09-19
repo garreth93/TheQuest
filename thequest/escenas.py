@@ -182,9 +182,11 @@ class Partida(Escena):
         # Instancia de la clase planeta
         self.planeta = Planeta(self)
 
-        # Creo variables para hacer contadores necesarios
+        # Creo variables para hacer contadores necesarios y flags
         self.momento_colision = 0        
         self.recta_final = 0        
+        self.flag_rotacion_acabada = False
+        self.flag_marcha_atras = False
 
     def bucle_principal(self):
         '''Este es el bucle principal'''
@@ -251,8 +253,11 @@ class Partida(Escena):
                 # Metodo para comprobar el game over
                 self.game_over()
 
+                # Ejecutan la animacion final cuando ganas
                 self.animacion()
-
+                self.animacion2()
+                self.animacion3()
+            
                 # Actualizacion de la ventana
                 pg.display.update()   
 
@@ -390,13 +395,13 @@ class Partida(Escena):
                     self.texto_level2.rect_textlevel.x -= self.texto_level2.velocidad_x
     
     def nivel2flag(self):        
-        if self.estadisticas.puntuacion > 200:                                   
+        if self.estadisticas.puntuacion > 100:                                   
             self.puntuacion.recta_final_flag = True
     
     def cuenta_asteroides(self):
         '''Este metodo cuenta asteroides una vez comenzado el nivel 2,
          y finaliza el juego.'''
-        if self.puntuacion.contador_aster > 20:
+        if self.puntuacion.contador_aster > 10:
             self.ganar_partida()
     
     def ganar_partida(self): #FIXME Terminar la animacion de victoria
@@ -407,17 +412,34 @@ class Partida(Escena):
             if self.planeta.planeta_rect.left < ANCHO - 300:
                 self.planeta.velocidad_x = 0
 
-            self.nave_ganadora.blitNaveWin()
-            self.nave_ganadora.rect.x += self.nave_ganadora.velocidad_x
-            if self.nave_ganadora.rect.right == ANCHO - 300:
-                self.nave_ganadora.velocidad_x = 0
+            if self.nave_ganadora.rect.right < ANCHO - 300:
+                self.nave_ganadora.blitNaveWin()
+                self.nave_ganadora.rect.x += self.nave_ganadora.velocidad_x
+                if self.nave_ganadora.rect.right == ANCHO - 300:
+                    self.nave_ganadora.velocidad_x = 0
                 
                         
     def animacion(self):
-        if self.nave_ganadora.rect.right >= ANCHO - 300:
+        '''Esta animacion rota la nave al terminar'''
+        if self.nave_ganadora.rect.right >= ANCHO - 300:            
             self.nave_ganadora.tick()
-            print("HOLAAAA")
+            if self.nave_ganadora.rotacion == 179:                
+                self.flag_rotacion_acabada = True
 
+    def animacion2(self):
+        '''Blitea una imagen ya rotada 180 de la imagen'''
+        if self.flag_rotacion_acabada == True:                                 
+            self.nave_ganadora.blitnaveWin_rotada()
+            self.flag_marcha_atras = True
+            
+
+    def animacion3(self):
+        '''Ejecuta la marcha atras de la nave'''
+        if self.flag_marcha_atras == True:
+            self.nave_ganadora.velocidad_x = 1
+            if self.nave_ganadora.rect_rotada.right < ANCHO - 100:
+                self.nave_ganadora.rect_rotada.x += self.nave_ganadora.velocidad_x
+                
 
     def textoVictoria(self):
         '''Este metodo muestra el haber superado el juego'''    

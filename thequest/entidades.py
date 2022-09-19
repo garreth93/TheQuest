@@ -165,19 +165,21 @@ class NaveVictoriosa(Sprite):
         # Pintar imagen de la nave
         self.pantalla.blit(self.nave_imagen, self.rect)
 
-    def tick(self):
+
+    def tick(self):        
         self.rotacion += 1
-        if self.rotacion < 180:
-            self.rotar_nave(self.nave_imagen, ANCHO - 400, 350, self.rotacion)
-            if self.rotacion == 180:
-                self.velocidad_x = 1
-                self.rect.x += self.velocidad_x
+        if self.rotacion < 180:            
+            self.rotar_nave(self.nave_imagen, ANCHO - 380, 310, self.rotacion)
+            
 
     def rotar_nave(self, imagen, x, y, angulo):
         '''Rota la nave en su eje central'''
         self.imagen_rotada = pg.transform.rotate(imagen, angulo)
         self.pantalla.blit(self.imagen_rotada, self.imagen_rotada.get_rect(center=imagen.get_rect(topleft=(x,y)).center).topleft)       
-        
+        self.rect_rotada = self.imagen_rotada.get_rect(midright=(ANCHO -300, ALTO/2))
+
+    def blitnaveWin_rotada(self):
+        self.pantalla.blit(self.imagen_rotada, self.rect_rotada)
 
 class TextoNivel2():
     def __init__(self, tq_game):
