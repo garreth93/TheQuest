@@ -314,7 +314,7 @@ class Partida(Escena):
     def colision(self):
         '''Este metodo detecta las colisones que 
         se producen en la nave con los asteroides y resta vidas'''       
-        self.colision_nave = pg.sprite.spritecollide(self.jugador, self.asteroides, False, pg.sprite.collide_circle)
+        self.colision_nave = pg.sprite.spritecollide(self.jugador, self.asteroides, True, pg.sprite.collide_circle)
         # Captura de los ticks en la colision y cambio del estado de la nave a explosion
         if self.colision_nave:
             self.momento_colision = pg.time.get_ticks()
@@ -340,7 +340,7 @@ class Partida(Escena):
     def refresca_colision(self):
         '''Cuenta medio segundo y vuelve la imagen de la 
         nave'''
-        if self.tiempo_actual - self.momento_colision > 50:
+        if self.tiempo_actual - self.momento_colision > 500:
             self.jugador.nave_imagen = pg.image.load(os.path.join("resources", "images", "Main_Ship.png"))
             self.jugador.nave_imagen = pg.transform.rotate(self.jugador.nave_imagen, -90)
             self.jugador.nave_imagen = pg.transform.scale(self.jugador.nave_imagen, self.jugador.TAMAÑO_NAVE)
