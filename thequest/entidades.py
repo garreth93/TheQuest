@@ -1,3 +1,4 @@
+from email.mime import image
 import os
 import random
 
@@ -147,7 +148,7 @@ class NaveVictoriosa(Sprite):
         self.pantalla = tq_game.pantalla
         self.pantalla_rect = tq_game.pantalla.get_rect()
         self.velocidad_x = 1
-        self.angulo = 0        
+        self.rotacion = 0        
         # Cargar imagen de nave
         self.nave_imagen = pg.image.load(os.path.join("resources", "images", "Main_Ship.png"))
 
@@ -163,6 +164,20 @@ class NaveVictoriosa(Sprite):
     def blitNaveWin(self):
         # Pintar imagen de la nave
         self.pantalla.blit(self.nave_imagen, self.rect)
+
+    def tick(self):
+        self.rotacion += 1
+        if self.rotacion < 180:
+            self.rotar_nave(self.nave_imagen, ANCHO - 400, 350, self.rotacion)
+            if self.rotacion == 180:
+                self.velocidad_x = 1
+                self.rect.x += self.velocidad_x
+
+    def rotar_nave(self, imagen, x, y, angulo):
+        '''Rota la nave en su eje central'''
+        self.imagen_rotada = pg.transform.rotate(imagen, angulo)
+        self.pantalla.blit(self.imagen_rotada, self.imagen_rotada.get_rect(center=imagen.get_rect(topleft=(x,y)).center).topleft)       
+        
 
 class TextoNivel2():
     def __init__(self, tq_game):

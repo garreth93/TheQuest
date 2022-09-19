@@ -251,6 +251,8 @@ class Partida(Escena):
                 # Metodo para comprobar el game over
                 self.game_over()
 
+                self.animacion()
+
                 # Actualizacion de la ventana
                 pg.display.update()   
 
@@ -388,13 +390,13 @@ class Partida(Escena):
                     self.texto_level2.rect_textlevel.x -= self.texto_level2.velocidad_x
     
     def nivel2flag(self):        
-        if self.estadisticas.puntuacion > 800:                                   
+        if self.estadisticas.puntuacion > 200:                                   
             self.puntuacion.recta_final_flag = True
     
     def cuenta_asteroides(self):
         '''Este metodo cuenta asteroides una vez comenzado el nivel 2,
          y finaliza el juego.'''
-        if self.puntuacion.contador_aster > 50:
+        if self.puntuacion.contador_aster > 20:
             self.ganar_partida()
     
     def ganar_partida(self): #FIXME Terminar la animacion de victoria
@@ -409,11 +411,12 @@ class Partida(Escena):
             self.nave_ganadora.rect.x += self.nave_ganadora.velocidad_x
             if self.nave_ganadora.rect.right == ANCHO - 300:
                 self.nave_ganadora.velocidad_x = 0
-                if self.nave_ganadora.velocidad_x == 0:
-                    """ for grados in range(0, 180): #FIXME Esto peta el juego
-                        self.nave_ganadora.angulo += grados                    
-                        self.nave_ganadora.nave_imagen = (pg.transform.rotate(self.nave_ganadora.nave_imagen, self.nave_ganadora.angulo)) """
+                
                         
+    def animacion(self):
+        if self.nave_ganadora.rect.right >= ANCHO - 300:
+            self.nave_ganadora.tick()
+            print("HOLAAAA")
 
 
     def textoVictoria(self):
